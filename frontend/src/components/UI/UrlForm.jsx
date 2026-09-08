@@ -16,9 +16,9 @@ const UrlForm = () => {
     try {
       const shortUrl = await createShortUrl(urlValue);
       setShortUrlVal(shortUrl);
-      queryClient.invalidateQueries({ queryKey: ['user-allUrls'] });
+      queryClient.invalidateQueries({ queryKey: ['user-urls'] });
       seturlValue('');
-      toast.success('Short url created', { autoClose: 1000 });
+      toast.success('Short url created', { autoClose: 950 });
     } catch (error) {
       setServerError(
         error?.message,

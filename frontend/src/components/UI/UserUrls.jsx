@@ -1,5 +1,4 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { useUsersUrls } from '../../utils/usersUrls';
 import { useState } from 'react';
 import { baseUrlForUrls } from '../../config/config';
@@ -34,9 +33,9 @@ const UserUrls = () => {
   const deleteUrlHandler = async (urlId) => {
     // console.log(data);
     await deleteSingleUrl(urlId);
-    queryClient.invalidateQueries({ queryKey: ['user-allUrls'] });
+    queryClient.invalidateQueries({ queryKey: ['user-urls'] });
 
-    toast.success('Url deleted successfully', { autoClose: 900 });
+    toast.success('Url deleted successfully', { autoClose: 950 });
   };
 
   /* If loading then show skeleton loader or user urls */
@@ -55,6 +54,7 @@ const UserUrls = () => {
 
   const urls = data?.urls || [];
 
+  // console.log(urls);
   /* If length is zero of url array */
   if (data.urls.length === 0) {
     return (
@@ -65,14 +65,14 @@ const UserUrls = () => {
   }
 
   return (
-    <section className="relative min-h-screen rounded-xl overflow-hidden bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 px-4 py-10 md:px-6">
+    <section className="relative min-h-auto rounded-xl overflow-hidden bg-linear-to-br from-slate-950 via-slate-900 to-indigo-950 px-4 py-10 md:px-6">
       {/* Background Blur */}
       <div className="absolute -top-32 left-0 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl" />
       <div className="absolute right-0 top-1/2 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
 
-      <div className="relative mx-auto max-w-7xl">
+      <div className="relative mx-auto max-w-7xl ">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 ">
           <div className="mb-3 flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-linear-to-r from-indigo-600 to-cyan-500">
               <Link2 className="h-5 w-5 text-white" />
@@ -119,7 +119,7 @@ const UserUrls = () => {
 
               <tbody>
                 {data.urls.map((url) => {
-                  const shortUrl = `${baseUrlForUrls}/${url.short_url}`;
+                  const shortUrl = `${baseUrlForUrls}/${url.shortCode}`;
 
                   return (
                     <tr
@@ -129,11 +129,11 @@ const UserUrls = () => {
                       {/* Original URL */}
                       <td className="max-w-md p-5">
                         <Link
-                          to={url.full_url}
+                          to={url.originalUrl}
                           target="_blank"
                           className="flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 hover:underline"
                         >
-                          <span className="truncate">{url.full_url}</span>
+                          <span className="truncate">{url.originalUrl}</span>
 
                           <FiExternalLink className="shrink-0" />
                         </Link>
@@ -208,7 +208,7 @@ const UserUrls = () => {
         {/* Mobile Cards */}
         <div className="space-y-4 md:hidden">
           {data.urls.map((url) => {
-            const shortUrl = `${baseUrlForUrls}/${url.short_url}`;
+            const shortUrl = `${baseUrlForUrls}/${url.shortCode}`;
 
             return (
               <div
@@ -222,7 +222,7 @@ const UserUrls = () => {
                   </p>
 
                   <a
-                    href={url.full_url}
+                    href={url.originalUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-start gap-2 break-all text-sm text-indigo-400"
