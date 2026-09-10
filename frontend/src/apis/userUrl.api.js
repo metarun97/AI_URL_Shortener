@@ -5,15 +5,15 @@ import axiosInstance from "../utils/axiosInstance";
 /* Create shortUrl for user */
 export const createShortUrl = async (url) => {
   const res = await axiosInstance.post('/api/url/create', {
-    full_url: url,
+    originalUrl: url,
   })
-  const { short_url } = res.data.newUrl;
-  return short_url;
+  // const { shortCode } = ;
+  return res?.data?.newUrl?.shortCode;
 }
 
 // user All URLS:-
 export const userAllUrls = async () => {
-  const { data } = await axiosInstance.get("/api/url/myAllUrls")
+  const { data } = await axiosInstance.get("/api/url/")
   return data;
 }
 

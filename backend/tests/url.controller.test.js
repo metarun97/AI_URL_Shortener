@@ -66,8 +66,8 @@ describe('createShortUrl controller', () => {
   it('returns 409 when the URL already exists', async () => {
     const userId = new mongoose.Types.ObjectId();
     await urlModel.create({
-      full_url: 'https://example.com',
-      short_url: 'existing',
+      originalUrl: 'https://example.com',
+      shortCode: 'existing',
       user: userId,
     });
     const res = buildRes();
@@ -108,7 +108,7 @@ describe('redirectShortUrl controller', () => {
     redisClient.hGet.mockResolvedValue('https://example.com/cached');
     const res = buildRes();
 
-    await redirectShortUrl({ params: { shortedId: 'cached1' } }, res);
+    await redirectShortUrl({ params: { shortCode: 'cached1' } }, res);
 
     expect(redisClient.hIncrBy).toHaveBeenCalledWith('url:cached1', 'clicks', 1);
     expect(res.redirect).toHaveBeenCalledWith('https://example.com/cached');
@@ -118,7 +118,7 @@ describe('redirectShortUrl controller', () => {
     redisClient.hGet.mockResolvedValue(null);
     const res = buildRes();
 
-    await redirectShortUrl({ params: { shortedId: 'missing' } }, res);
+    await redirectShortUrl({ params: { shortCode: 'missing' } }, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ message: 'URL not found' });
@@ -126,8 +126,8 @@ describe('redirectShortUrl controller', () => {
 
   it('redirects from MongoDB and increments clicks on a cache miss', async () => {
     const url = await urlModel.create({
-      full_url: 'https://example.com/database',
-      short_url: 'db12345',
+      originalUrl: 'https://example.com/database',
+      shortCode: 'db12345',
       user: new mongoose.Types.ObjectId(),
       clicks: 2,
     });
@@ -136,7 +136,7 @@ describe('redirectShortUrl controller', () => {
     redisClient.expire.mockResolvedValue(true);
     const res = buildRes();
 
-    await redirectShortUrl({ params: { shortedId: 'db12345' } }, res);
+    await redirectShortUrl({ params: { shortCode: 'db12345' } }, res);
 
     expect(redisClient.hSet).toHaveBeenCalledWith('url:db12345', {
       full_url: 'https://example.com/database',
@@ -165,8 +165,8 @@ describe('deleteUrl controller', () => {
   it('deletes the URL and clears the user cache', async () => {
     const userId = new mongoose.Types.ObjectId();
     const url = await urlModel.create({
-      full_url: 'https://example.com/delete',
-      short_url: 'delete1',
+      originalUrl: 'https://example.com/delete',
+      shortCode: 'delete1',
       user: userId,
     });
     const res = buildRes();
@@ -185,8 +185,8 @@ describe('getAllUsersUrl controller', () => {
     const otherUserId = new mongoose.Types.ObjectId();
 
     await urlModel.create([
-      { full_url: 'https://example.com/one', short_url: 'abc123', user: userId, clicks: 1 },
-      { full_url: 'https://example.com/two', short_url: 'def456', user: otherUserId, clicks: 2 },
+      { originalUrl: 'https://example.com/one', shortCode: 'abc123', user: userId, clicks: 1 },
+      { originalUrl: 'https://example.com/two', shortCode: 'def456', user: otherUserId, clicks: 2 },
     ]);
 
     const req = {

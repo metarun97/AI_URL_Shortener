@@ -10,7 +10,8 @@ export const createShortUrlService = async (originalUrl, userId) => {
   const newUrl = await urlModel.create({
     originalUrl,
     shortCode: shortCodeId,
-    user: userId
-  })
+    user: userId,
+  });
+
   return newUrl;
-}
+};
