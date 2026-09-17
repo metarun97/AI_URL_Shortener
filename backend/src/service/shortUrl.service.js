@@ -2,16 +2,18 @@
 import urlModel from "../models/url.model.js";
 import { generateNanoId } from "../utils/genrateUniqueId.js";
 
-// createShortUrlService:-
-export const createShortUrlService = async (originalUrl, userId) => {
+/* createShortUrlService created */
+export const createShortUrlService = async (originalUrl, userId, isUrlSafe = false, risk = "", aiReason = "") => {
   const shortCodeId = generateNanoId(7);
 
-  // creating newUrl:-
-  const newUrl = await urlModel.create({
-    originalUrl,
+  /* Creating newShortUrl */
+  const newShortUrl = await urlModel.create({
+    originalUrl: originalUrl,
     shortCode: shortCodeId,
+    isUrlSafe: isUrlSafe,
+    risk: risk,
+    aiReason: aiReason,
     user: userId,
   });
-
-  return newUrl;
+  return newShortUrl;
 };

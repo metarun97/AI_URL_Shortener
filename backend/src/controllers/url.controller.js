@@ -1,26 +1,30 @@
 // Imported items:-
 import urlModel from "../models/url.model.js";
 import { createShortUrlService } from "../service/shortUrl.service.js";
-import redisClient from '../db/redis.js';
+import { checkUrlSafety } from '../service/ai.service.js';
 
 
-//* createShortUrl API Controller:-
-export const createShortUrl = async (req, res) => {
+/**
+ * @name createShortUrlController
+ * @description create a new shortUrl expects originalUrl in req.body
+ * @access private
+ */
+export const createShortUrlController = async (req, res) => {
   try {
-    const { full_url, originalUrl } = req.body;
-    const userId = req?.user?.id;
-    const urlToCreate = full_url || originalUrl;
+    const { originalUrl } = req.body;
+    const userId = req.user?.id;
 
-    // Check for user:-
+
+    /* Check for user */
     if (!userId) {
       return res.status(401).json({
-        message: "Unoutherized:User not found",
+        message: "Unoutherized: User not found",
       });
     }
 
-    // Check if URL already exists:-
+    /* Url check for conflict */
     const urlExists = await urlModel.findOne({
-      originalUrl: urlToCreate,
+      originalUrl: originalUrl,
       user: userId,
     });
 
@@ -30,26 +34,21 @@ export const createShortUrl = async (req, res) => {
       });
     }
 
-    // Create URL in MongoDB:-
-    const newUrl = await createShortUrlService(urlToCreate, userId);
-    const responseNewUrl = {
-      _id: newUrl._id,
-      full_url: newUrl.originalUrl,
-      short_url: newUrl.shortCode,
-      user: newUrl.user,
-    };
+    /* Gemini AI Integrated for URL safety check */
+    let safetyRes;
+    try {
+      safetyRes = await checkUrlSafety(originalUrl);
 
-    // Redis cache key:-
-    const cacheKey = `url:${newUrl.shortCode}`;
+    } catch (error) {
+      /* If AI fail then execute this */
+      console.log("AI check failed:", error.message);
+    }
 
-    // Store URL in Redis:-
-    await redisClient.hSet(cacheKey, {
-      originalUrl: newUrl.originalUrl,
-      clicks: String(newUrl.clicks || 0),
-    });
+    // const aiParsedData = JSON.parse(safetyRes);
+    const { isUrlSafe, risk, aiReason } = safetyRes;
 
-    // Cache expiry time = 1 hour:-
-    await redisClient.expire(cacheKey, 60 * 60);
+    /* Create shorUrl in MongoDB */
+    const newUrl = await createShortUrlService(originalUrl, userId, isUrlSafe, risk, aiReason);
 
     // final response:-
     return res.status(201).json({
@@ -59,41 +58,30 @@ export const createShortUrl = async (req, res) => {
       shortCode: newUrl.shortCode,
       shortUrl: `${process.env.BASE_URL}/${newUrl.shortCode}`,
       user: userId,
-      newUrl: responseNewUrl,
+      newUrl: newUrl,
     });
 
   } catch (error) {
     console.error("URL creation error", error);
+
     return res.status(500).json({
       message: "Unable to create URL",
     });
   }
+
 };
 
 
-//* redirectShortUrl API Controller:-
-export const redirectShortUrl = async (req, res) => {
+/**
+ * @name redirectShortUrlController
+ * @description user can redirect to created shortUrl
+ * @access public
+ */
+export const redirectShortUrlController = async (req, res) => {
   try {
-    const shortUrlId = req.params.shortCode || req.params.shortedId;
+    const shortUrlId = req.params.shortCode;
 
-    //  Redis key:-
-    const cacheKey = `url:${shortUrlId}`;
-
-    // Redis se originalUrl nikalo:-
-    const cachedUrl = await redisClient.hGet(cacheKey, "originalUrl") || await redisClient.hGet(cacheKey, "full_url");
-
-    //  Redis HIT (If cachedUrl not found then skip this part till return redirection):-
-    if (cachedUrl) {
-      console.log("redis hit");
-      await redisClient.hIncrBy(cacheKey, "clicks", 1);
-      await urlModel.updateOne(
-        { shortCode: shortUrlId },
-        { $inc: { clicks: 1 } }
-      );
-      return res.redirect(cachedUrl);
-    }
-
-    // If Redis missing shortCode by MongoDb:-
+    /* If Redis missing shortCode by MongoDb */
     const url = await urlModel.findOne({ shortCode: shortUrlId });
 
     // if url not found:-
@@ -103,82 +91,36 @@ export const redirectShortUrl = async (req, res) => {
       });
     }
 
-    // MongoDB se mila URL Redis me cache karo:-
-    await redisClient.hSet(cacheKey, {
-      full_url: url.originalUrl,
-      clicks: String(url.clicks || 0),
-    });
-
-    // Redis cache expiry time = 1 hour:-
-    await redisClient.expire(cacheKey, 60 * 60);
-
     // Click count MongoDB me increase:-
     await urlModel.updateOne(
       { _id: url._id },
       { $inc: { clicks: 1 } }
     );
 
-    // Redis me bhi click increase:-
-    await redisClient.hIncrBy(cacheKey, "clicks", 1);
-
-    // Redirect:-
+    /* Redirection to full url by shortUrl */
     return res.redirect(url.originalUrl);
 
   } catch (error) {
-    console.error("URL redirection error")
+    console.error("URL redirection error");
+
     return res.status(500).json({
       message: "Unable to redirect on URL",
     });
+
   }
 };
 
-
-//* getAllUsersUrl API Controller:-
-export const userUrls = async (req, res) => {
-  try {
-    const userId = req?.user?.id;
-
-    // If userId not found means user Unauthorized:-
-    if (!userId) {
-      return res.status(401).json({
-        message: "Unauthorized: User not found",
-      });
-    }
-
-    // If urls not found in cache then get from mongoDB:-
-    const urls = await urlModel
-      .find({ user: userId })
-      .sort({ createdAt: -1 })
-      .populate("user")
-      .lean();
-
-    const mappedUrls = urls.map((url) => ({
-      ...url,
-      full_url: url.originalUrl,
-      short_url: url.shortCode,
-    }));
-
-    // Final response:-
-    return res.status(200).json({
-      count: mappedUrls.length,
-      urls: mappedUrls,
-    });
-  } catch (error) {
-    console.error("All URLs fetching Error ", error);
-    return res.status(500).json({
-      message: "Unable to fetch All URLs",
-    });
-  }
-};
-
-
-//* deleteSingleUrl API Controller:-
-export const deleteUrl = async (req, res) => {
+/**
+ * @name deleteUrlController
+ * @description currentUser can delete shortUrl which is created
+ * @access private
+ */
+export const deleteUrlController = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user?.id;
 
-    /* Find url by it's id and user */
+    /* Check for URL by it's id and user */
     const url = await urlModel.findOne({
       _id: id,
       user: userId,
@@ -190,24 +132,62 @@ export const deleteUrl = async (req, res) => {
       });
     }
 
-    /* Delete that url which id matched  */
+    /* Check for delete the URL  */
     await urlModel.findOneAndDelete({
       _id: id,
       user: userId,
     });
 
-    await redisClient.del(`user:urls:${userId}`);
-
     /* Final response */
     return res.status(200).json({
       messsage: "Url deleted successfully",
     });
+
   } catch (error) {
+
     console.error("URL deletion Error:", error)
     return res.status(500).json({
       message: "Unable to delete URL",
     });
+
   }
 };
 
+
+/**
+ * @name allUrlsConroller
+ * @description get all created shortUrl by current user
+ * @access private
+ */
+export const allUrlsConroller = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+
+
+    /* Check for user */
+    if (!userId) {
+      return res.status(401).json({
+        message: "Unauthorized: User not found",
+      });
+    }
+
+    /* Fetch all created shorUrls from MongoDB database */
+    const urls = await urlModel.find({ user: userId })
+      .sort({ createdAt: -1 }).populate("user").lean();
+
+
+    /* Final response */
+    return res.status(200).json({
+      message: "URLs fetched successfully",
+      count: urls.length,
+      urls: urls,
+    });
+
+  } catch (error) {
+    console.error("All URLs fetching Error ", error);
+    return res.status(500).json({
+      message: "Unable to fetch All URLs",
+    });
+  }
+};
 

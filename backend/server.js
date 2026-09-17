@@ -1,4 +1,3 @@
-/* Imported elements */
 import "dotenv/config";
 import app from './src/app.js';
 import dns from "dns";

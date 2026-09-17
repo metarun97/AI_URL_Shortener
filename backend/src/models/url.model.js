@@ -16,6 +16,25 @@ const urlSchema = new mongoose.Schema({
     unique: true,
   },
 
+  isUrlSafe: {
+    type: Boolean,
+    required: true,
+    default: null,
+  },
+
+  risk: {
+    type: String,
+    enum: ["low", "medium", "high"],
+    required: true,
+    default: null,
+  },
+
+  aiReason: {
+    type: String,
+    required: true,
+    default: null,
+  },
+
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
@@ -27,7 +46,6 @@ const urlSchema = new mongoose.Schema({
     default: 0,
   },
 },
-
   { timestamps: true }
 );
 

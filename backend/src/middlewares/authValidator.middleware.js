@@ -1,7 +1,6 @@
-// Imported items:-
 import { body, validationResult } from "express-validator";
 
-// Error arrays respond:-
+/* Validation error arrays respond */
 const respondWithVelidationErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -10,13 +9,13 @@ const respondWithVelidationErrors = (req, res, next) => {
   next();
 }
 
-// Register validation rules:-
+/* Register validation rules */
 export const registerUserValidation = [
-  body("name")
+  body("username")
     .isString()
-    .withMessage("name must be string")
+    .withMessage("username must be string")
     .notEmpty()
-    .withMessage("name must be required")
+    .withMessage("username must be required")
     .isLength({ min: 3 })
     .withMessage("name must be atleast 3 charachter long"),
   body("email")
@@ -36,7 +35,7 @@ export const registerUserValidation = [
   respondWithVelidationErrors
 ]
 
-// Login validation rules:-
+/*  Login validation rules */
 export const loginUserValidation = [
 
   body("email")
@@ -50,7 +49,7 @@ export const loginUserValidation = [
   respondWithVelidationErrors
 ]
 
-// Login validation rules:-
+/* create URL validation rules */
 export const createShortUrlValidation = [
   body("originalUrl")
     .trim()

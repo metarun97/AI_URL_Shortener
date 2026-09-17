@@ -5,7 +5,7 @@ import generateGravatarUrl from "../utils/gravetar.js";
 
 /* user Schema created */
 const userSchema = new mongoose.Schema({
-  name: {
+  username: {
     type: String,
     unique: true,
   },
@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: false,
-    // add gravetar as default
+    /* Add gravetar as default */
     default: function () {
       return generateGravatarUrl(this.email);
     },
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 
-/* user Model created */
+/* userModel created */
 const userModel = mongoose.model("user", userSchema);
 
 

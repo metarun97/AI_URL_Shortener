@@ -1,7 +1,7 @@
 // Imported items:-
 import express from "express";
-import { createShortUrl, deleteUrl, userUrls, redirectShortUrl } from "../controllers/url.controller.js";
-import { authPassByRefreshToken } from '../middlewares/auth.middleware.js';
+import { createShortUrlController, redirectShortUrlController, deleteUrlController, allUrlsConroller } from "../controllers/url.controller.js";
+import { protectedAuthUser } from '../middlewares/auth.middleware.js';
 import { createShortUrlValidation } from "../middlewares/authValidator.middleware.js";
 import { createUrlLimiter } from "../middlewares/rateLimit.middleware.js";
 
@@ -10,18 +10,36 @@ import { createUrlLimiter } from "../middlewares/rateLimit.middleware.js";
 const router = express.Router();
 
 
-/* /api/url/create Endpoint */
-router.post("/create", authPassByRefreshToken, createShortUrlValidation, createUrlLimiter, createShortUrl);
+/**
+ * @routes  /api/auth/create
+ * @description  for create a new shortURL
+ * @access  private
+ */
+router.post("/create", protectedAuthUser, createShortUrlValidation, createUrlLimiter, createShortUrlController);
 
-/* /api/url/:shortCode redirect Endpoint */
-router.get("/:shortCode", redirectShortUrl);
 
-/* /api/url/userUrls Endpoint */
-router.get("/", authPassByRefreshToken, userUrls);
+/**
+ * @routes  /api/auth/:shortCode
+ * @description  for redirect to the shortUrl
+ * @access  public
+ */
+router.get("/:shortCode", redirectShortUrlController);
 
-/* /api/url/:id Endpoint */
-router.delete("/:id", authPassByRefreshToken, deleteUrl);
 
+/**
+ * @routes  /api/auth/:id
+ * @description  for currentUser to delete the shortUrl
+ * @access  private
+ */
+router.delete("/:id", protectedAuthUser, deleteUrlController);
+
+
+/**
+ * @routes  /api/auth/
+ * @description  to get all currentUser's  short URLs
+ * @access  private
+ */
+router.get("/", protectedAuthUser, allUrlsConroller);
 
 
 export default router;

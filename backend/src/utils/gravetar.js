@@ -1,7 +1,8 @@
 // imported items:-
 import crypto from "crypto";
 
-// create gravatar:-
+
+/* Create gravatar for user profile image */
 const generateGravatarUrl = (email) => {
   const hash = crypto
     .createHash("md5")

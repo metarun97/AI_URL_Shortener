@@ -1,26 +1,42 @@
-/* Imported elements */
 import express from 'express';
-import { registerUser, loginUser, meUser, logoutUser, refreshTheToken } from '../controllers/auth.controller.js';
+import { registerController, loginController, getMeController, logoutController } from '../controllers/auth.controller.js';
 import { loginUserValidation, registerUserValidation } from '../middlewares/authValidator.middleware.js';
-import { authPassByRefreshToken } from '../middlewares/auth.middleware.js';
+import { protectedAuthUser } from '../middlewares/auth.middleware.js';
 import { loginUserLimiter, registerUserLimiter } from '../middlewares/rateLimit.middleware.js';
+
 
 /* Router created */
 const router = express.Router();
 
-/*   /api/auth/register Endpoint   */
-router.post("/register", registerUserValidation, registerUserLimiter, registerUser);
+/**
+ * @routes  /api/auth/register
+ * @description  for register a new user
+ * @access  public
+ */
+router.post("/register", registerUserValidation, registerUserLimiter, registerController);
 
-/*   /api/auth/login Endpoint   */
-router.post("/login", loginUserValidation, loginUserLimiter, loginUser);
 
-/*   /api/auth/me Endpoint   */
-router.get("/me", authPassByRefreshToken, meUser)
+/**
+ * @routes  /api/auth/login
+ * @description for login a user
+ * @access public
+ */
+router.post("/login", loginUserValidation, loginUserLimiter, loginController);
 
-/*   /api/auth/logout Endpoint   */
-router.post("/logout", logoutUser);
 
-/*   /api/auth/logout Endpoint   */
-router.post("/refresh", refreshTheToken);
+/**
+ * @routes  /api/auth/logout
+ * @description for logout the current user
+ * @access public
+ */
+router.post("/logout", logoutController);
+
+
+/**
+ * @routes  /api/auth/get-me
+ * @description for get the current logged in user details
+ * @access private
+ */
+router.get("/get-me", protectedAuthUser, getMeController)
 
 export default router;

@@ -1,5 +1,8 @@
-import ai from "../config/ai.service.js";
+import { Type } from '@google/genai';
+import ai from '../config/genAI.credentials.js';
 
+
+/* Check safety by AI */
 export const checkUrlSafety = async (url) => {
   const prompt = `
 Check whether this URL is safe or suspicious.
@@ -28,10 +31,32 @@ Rules:
 - "risk" must be exactly one of: "low", "medium", "high".
 - "aiReason" must be a short string.
 `;
-
-  const response = await ai.interactions.create({
-    model: "gemini-3.8-flash",
-    input: prompt,
-  })
-  return response.output_text
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3.6-flash",
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            isUrlSafe: { type: Type.BOOLEAN },
+            risk: { type: Type.STRING, enum: ["low", "medium", "high"] },
+            aiReason: { type: Type.STRING }
+          },
+          required: ['isUrlSafe', 'risk', 'aiReason'],
+        },
+        temperature: 0.1
+      }
+    })
+    return JSON.parse(response.text || {});
+  }
+  catch (error) {
+    console.error("[checkUrlSafety Error]:", error.message);
+    return {
+      isUrlSafe: false,
+      risk: "high",
+      aiReason: "AI verification service unavailable."
+    };
+  }
 }

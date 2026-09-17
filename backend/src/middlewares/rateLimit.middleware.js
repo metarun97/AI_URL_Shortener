@@ -11,6 +11,7 @@ export const loginUserLimiter = rateLimit({
   },
 });
 
+
 export const registerUserLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   limit: 5,
