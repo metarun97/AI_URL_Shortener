@@ -5,10 +5,13 @@ import urlRoutes from './routes/url.routes.js';
 import cors from "cors";
 
 /* Server created */
-const app = express();
+const app = express({});
 
 /* Remove cors error */
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
 
 /* Middleware to read req.body data */
 app.use(express.json());

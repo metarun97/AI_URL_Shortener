@@ -1,4 +1,3 @@
-// Imported items:-
 import express from "express";
 import { createShortUrlController, redirectShortUrlController, deleteUrlController, allUrlsConroller } from "../controllers/url.controller.js";
 import { protectedAuthUser } from '../middlewares/auth.middleware.js';
