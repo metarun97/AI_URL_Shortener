@@ -1,12 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getMeThunk, loginThunk, logoutThunk, registerThunk } from "../thunks/thunk";
+import { getMeThunk, loginThunk, logoutThunk, registerThunk } from './authThunk';
 
 
 /* Initial state of authSlice */
 const initialState = {
   user: null,
   isAuthenticated: false,
-  initializing: true,
   loading: false,
   error: null,
 }

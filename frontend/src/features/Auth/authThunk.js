@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { getMe, login, logout, register } from "../../services/auth.service";
+import { getMe, login, logout, register } from "./services/auth.api";
 
 
 /* Register Thunk */
@@ -18,8 +18,6 @@ export const registerThunk = createAsyncThunk("auth/registerThunk", async (data,
 export const loginThunk = createAsyncThunk("auth/loginThunk", async (data, thunkApi) => {
   try {
     const responseData = await login(data);
-    // console.log(responseData)
-
     return responseData.user;
 
   } catch (error) {

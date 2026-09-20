@@ -2,7 +2,7 @@ import { useDispatch } from 'react-redux';
 import { data, Outlet } from 'react-router';
 import Navbar from './components/Navbar';
 import { useEffect } from 'react';
-import { getMeThunk } from './features/Auth/store/thunks/thunk';
+import { getMeThunk } from './features/Auth/authThunk';
 
 const App = () => {
   const dispatch = useDispatch();

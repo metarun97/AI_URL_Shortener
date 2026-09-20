@@ -1,8 +1,8 @@
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router';
-import { loginThunk } from '../store/thunks/thunk';
 import { toast } from 'react-toastify';
+import { loginThunk } from '../authThunk';
 
 const Login = () => {
   const {

@@ -1,8 +1,8 @@
 import { Link, useNavigate } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerThunk } from '../store/thunks/thunk';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import { registerThunk } from '../authThunk';
 
 const Register = () => {
   const {
@@ -114,7 +114,7 @@ const Register = () => {
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 w-full rounded-lg bg-teal-800 px-4 py-2.5 text-[0.95rem] font-medium text-white transition hover:bg-teal-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-teal-300 dark:text-teal-950 dark:hover:bg-teal-200 dark:focus-visible:outline-teal-300 cursor-pointer"
+            className="mt-2 w-full rounded-lg bg-teal-800 px-4 py-2.5 text-[0.95rem] font-medium text-white transition hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-teal-300 dark:text-teal-950 dark:hover:bg-teal-200 dark:focus-visible:outline-teal-300 cursor-pointer"
           >
             {loading ? 'Signing in…' : 'Sign in'}
           </button>

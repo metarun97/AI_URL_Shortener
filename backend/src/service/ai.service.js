@@ -1,55 +1,63 @@
-import { Type } from '@google/genai';
-import ai from '../config/genAI.credentials.js';
+import { GoogleGenAI } from '@google/genai';
+import { z } from "zod";
 
+
+const urlSafetySchema = {
+  type: "object",
+  properties: {
+    isUrlSafe: {
+      type: "boolean",
+      description: "Whether the URL is considered safe."
+    },
+    risk: {
+      type: "string",
+      enum: ["low", "medium", "high"],
+      description: "The security risk level of the URL."
+    },
+    aiReason: {
+      type: "string",
+      description: "A short explanation for the safety assessment."
+    }
+  },
+  required: ["isUrlSafe", "risk", "aiReason"]
+};
+
+
+const urLSchema = z.fromJSONSchema(urlSafetySchema);
+
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 /* Check safety by AI */
 export const checkUrlSafety = async (url) => {
+
   const prompt = `
-Check whether this URL is safe or suspicious.
+Analyze the following URL for security risks:
 
 URL: ${url}
 
-Analyze the URL for possible security risks such as:
-- phishing
-- malware
-- suspicious domain patterns
-- misleading URLs
-- known malicious-looking patterns
+Determine whether the URL is safe or potentially malicious.
+Check for signs of phishing, suspicious domains, impersonation, scams,
+or other potentially harmful patterns.
 
-Return ONLY valid JSON. Do not include markdown, code fences, or extra text.
-
-The JSON must follow exactly this structure:
-
-{
-  "isUrlSafe": true,
-  "risk": "low",
-  "aiReason": "Short explanation of why the URL is considered safe or suspicious."
-}
-
-Rules:
-- "isUrlSafe" must be a boolean: true or false.
-- "risk" must be exactly one of: "low", "medium", "high".
-- "aiReason" must be a short string.
+Return the safety assessment according to the provided JSON schema.
 `;
+
   try {
-    const response = await ai.models.generateContent({
+    const response = await ai.interactions.create({
       model: "gemini-3.6-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            isUrlSafe: { type: Type.BOOLEAN },
-            risk: { type: Type.STRING, enum: ["low", "medium", "high"] },
-            aiReason: { type: Type.STRING }
-          },
-          required: ['isUrlSafe', 'risk', 'aiReason'],
-        },
-        temperature: 0.1
+      input: prompt,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: urlSafetySchema,
       }
     })
-    return JSON.parse(response.text || {});
+
+    return urLSchema.parse(JSON.parse(response.output_text));
+
   }
   catch (error) {
     console.error("[checkUrlSafety Error]:", error.message);

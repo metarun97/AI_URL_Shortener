@@ -10,6 +10,7 @@ dns.setServers(["1.1.1.1", "8.8.8.8"]);
 /* Connect to mongodDb database */
 connectToDb();
 
+
 const PORT = process.env.PORT || 3000;
 
 /* Connect to redis database */

@@ -18,7 +18,7 @@ const urlSchema = new mongoose.Schema({
 
   isUrlSafe: {
     type: Boolean,
-    required: true,
+    required: [true, "URL safety is required"],
     default: null,
   },
 
@@ -31,7 +31,7 @@ const urlSchema = new mongoose.Schema({
 
   aiReason: {
     type: String,
-    required: true,
+    required: [true, "aiReason is required"],
     default: null,
   },
 
