@@ -1,28 +1,30 @@
 import { createBrowserRouter } from 'react-router';
-import Login from '../features/Auth/pages/Login';
-import Register from './../features/Auth/pages/Register';
-import Dashboard from './../features/Auth/pages/Dashboard';
-import Protected from '../features/Auth/components/Protected';
 import NotFound from '../pages/NotFound';
 import App from '../App';
+import Protected from '../features/Auth/components/Protected';
+import Guest from '../features/Auth/components/Guest';
+import SignIn from '../features/Auth/pages/SignIn';
+import SignUp from '../features/Auth/pages/SignUp';
+import CreateUrlDashboard from '../features/URL/pages/CreateUrlDashboard';
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
     children: [
+      /* ---- Guest components in guest Routes ---- */
       {
-        path: '/register',
-        element: <Register />,
+        element: <Guest />,
+        children: [
+          { path: '/signIn', element: <SignIn /> },
+          { path: '/signUp', element: <SignUp /> },
+        ],
       },
-      {
-        path: '/login',
-        element: <Login />,
-      },
-      /* Protected Route */
+
+      /* ---- Protected components in protected Routes ---- */
       {
         element: <Protected />,
-        children: [{ path: '/dashboard', element: <Dashboard /> }],
+        children: [{ path: '/urldashboard', element: <CreateUrlDashboard /> }],
       },
       {
         path: '*',

@@ -12,7 +12,7 @@ const Navbar = () => {
 
   const logoutHandler = async () => {
     await dispatch(logoutThunk()).unwrap();
-    toast.success('Logout Success✅');
+    toast.success('Logged Out!');
   };
 
   const linkClass =
@@ -21,10 +21,9 @@ const Navbar = () => {
     'focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-teal-800 ' +
     'dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-teal-300 dark:focus-visible:outline-teal-300';
 
-  const links = [
-    { label: 'Home', to: '/' },
-    { label: 'Dashboard', to: '/dashboard' },
-  ];
+  const buttonClass =
+    'ml-3 rounded-lg border border-slate-300 px-3.5 py-1.5 text-sm font-medium text-slate-700 transition hover:border-teal-800 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-800 dark:border-slate-700 dark:text-slate-300 dark:hover:border-teal-300 dark:hover:text-teal-300 dark:focus-visible:outline-teal-300 cursor-pointer';
+
 
   const Avatar = () =>
     user && (
@@ -49,11 +48,25 @@ const Navbar = () => {
 
         {/* Desktop right side */}
         <div className="hidden items-center gap-1 md:flex">
-          {links.map((link) => (
-            <Link key={link.to} to={link.to} className={linkClass}>
-              {link.label}
+          <Link className={linkClass} to={'/'}>
+            Home
+          </Link>
+
+          {/* Links show according to user */}
+          {user ? (
+            <Link to={'/urldashboard'} className={linkClass}>
+              UrlDashbord
             </Link>
-          ))}
+          ) : (
+            <div>
+              <Link to={'/signIn'} className={buttonClass}>
+                SignIn
+              </Link>
+              <Link to={'/signUp'} className={buttonClass}>
+                SignUp
+              </Link>
+            </div>
+          )}
 
           <div className="mx-3 h-8 w-px bg-slate-200 dark:bg-slate-800" />
 
@@ -73,7 +86,7 @@ const Navbar = () => {
             <button
               type="button"
               onClick={logoutHandler}
-              className="ml-3 rounded-lg border border-slate-300 px-3.5 py-1.5 text-sm font-medium text-slate-700 transition hover:border-teal-800 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-800 dark:border-slate-700 dark:text-slate-300 dark:hover:border-teal-300 dark:hover:text-teal-300 dark:focus-visible:outline-teal-300 cursor-pointer"
+              className={buttonClass}
             >
               Log out
             </button>
@@ -121,26 +134,35 @@ const Navbar = () => {
           className="border-t border-slate-200 px-4 pb-4 pt-3 md:hidden dark:border-slate-800"
         >
           <div className="flex flex-col gap-1">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className={linkClass}
-              >
-                {link.label}
+            <Link className={linkClass} to={'/'}>
+              Home
+            </Link>
+
+            {/* Links show according to user */}
+            {user ? (
+              <Link to={'/urldashboard'} className={linkClass}>
+                UrlDashbord
               </Link>
-            ))}
+            ) : (
+              <div>
+                <Link to={'/signIn'} className={buttonClass}>
+                  SignIn
+                </Link>
+                <Link to={'/signUp'} className={buttonClass}>
+                  SignUp
+                </Link>
+              </div>
+            )}
           </div>
 
           <div className="mt-3 flex items-center gap-2.5 border-t border-slate-200 pt-3 dark:border-slate-800">
             <Avatar />
             <div className="min-w-0 leading-tight">
               <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">
-                {username}
+                {user?.username}
               </p>
               <p className="truncate text-xs text-slate-500 dark:text-slate-400">
-                {email}
+                {user?.email}
               </p>
             </div>
           </div>

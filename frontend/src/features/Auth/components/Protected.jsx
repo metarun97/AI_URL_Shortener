@@ -3,7 +3,7 @@ import { Navigate, Outlet } from 'react-router';
 
 const Protected = () => {
   const { user, loading } = useSelector((state) => state.auth);
-  console.log(user);
+  // console.log(user);
 
   if (loading) {
     return (
@@ -16,7 +16,7 @@ const Protected = () => {
   }
 
   if (!user) {
-    return <Navigate to={'/login'} />;
+    return <Navigate to={'/signin'} />;
   }
 
   return <Outlet />;

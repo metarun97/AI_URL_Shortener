@@ -13,7 +13,7 @@ const App = () => {
 
   const getAndSetCurrentUser = async () => {
     const data = await dispatch(getMeThunk()).unwrap();
-    console.log(data);
+    // console.log(data);
   };
 
   return (
