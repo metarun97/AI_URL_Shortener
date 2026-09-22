@@ -6,6 +6,6 @@ import urlReducer from'../features/URL/urlSlice';
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    url: urlReducer,
+    urls: urlReducer,
   }
 })

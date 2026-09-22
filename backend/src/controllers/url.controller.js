@@ -2,7 +2,6 @@
 import urlModel from "../models/url.model.js";
 import { createShortUrlService } from "../service/shortUrl.service.js";
 import { checkUrlSafety } from '../service/ai.service.js';
-import { loginUserLimiter } from './../middlewares/rateLimit.middleware';
 
 
 /**
@@ -160,14 +159,18 @@ export const allUrlsConroller = async (req, res) => {
  */
 export const deleteUrlController = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req?.params;
     const userId = req.user?.id;
+    // console.log(req.params)
+    // console.log(id, userId)
 
     /* Check for URL by it's id and user */
     const url = await urlModel.findOne({
       _id: id,
       user: userId,
     });
+
+    // console.log(url);
 
     if (!url) {
       return res.status(404).json({

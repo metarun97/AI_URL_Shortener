@@ -24,7 +24,7 @@ const urlSchema = new mongoose.Schema({
 
   risk: {
     type: String,
-    enum: ["low", "medium", "high"],
+    enum: ["unknown", "low", "medium", "high"],
     required: true,
     default: null,
   },

@@ -16,21 +16,6 @@ export const createUrl = async ({ originalUrl }) => {
 }
 
 
-/* Redirect to Url API */
-export const redirectToUrl = async (shortCode) => {
-  try {
-    const response = await api.get(`/api/url/${shortCode}`);
-
-    return response.data;
-
-  } catch (error) {
-
-    console.log("URL redirection Error:", error);
-
-  }
-}
-
-
 /* Get all urls API */
 export const getAllUrls = async () => {
   try {
@@ -50,7 +35,6 @@ export const getAllUrls = async () => {
 export const deleteUrl = async (id) => {
   try {
     const response = await api.delete(`/api/url/${id}`);
-
     return response.data;
 
   } catch (error) {

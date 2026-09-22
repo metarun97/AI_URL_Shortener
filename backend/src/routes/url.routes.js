@@ -2,7 +2,7 @@ import express from "express";
 import { createShortUrlController, redirectShortUrlController, deleteUrlController, allUrlsConroller } from "../controllers/url.controller.js";
 import { protectedAuthUser } from '../middlewares/auth.middleware.js';
 import { createShortUrlValidation } from "../middlewares/authValidator.middleware.js";
-import { createUrlLimiter } from "../middlewares/rateLimit.middleware.js";
+import { createUrlLimiter } from './../middlewares/rateLimit.middleware.js';
 
 
 // Router created:-

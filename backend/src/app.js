@@ -2,6 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import authRoutes from './routes/auth.routes.js';
 import urlRoutes from './routes/url.routes.js';
+import statsRoutes from './routes/stats.routes.js';
 import cors from "cors";
 
 /* Server created */
@@ -25,6 +26,9 @@ app.use("/api/auth", authRoutes);
 
 /* URL routes prefix */
 app.use("/api/url", urlRoutes);
+
+/* Stats routes prefix */
+app.use("/api/stats", statsRoutes);
 
 
 export default app;

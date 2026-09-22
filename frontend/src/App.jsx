@@ -3,6 +3,7 @@ import { data, Outlet } from 'react-router';
 import Navbar from './components/Navbar';
 import { useEffect } from 'react';
 import { getMeThunk } from './features/Auth/authThunk';
+import Footer from './components/Footer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const App = () => {
       <main>
         <Outlet />
       </main>
+      <Footer />
     </>
   );
 };

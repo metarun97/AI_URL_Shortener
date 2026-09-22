@@ -6,10 +6,11 @@ import Guest from '../features/Auth/components/Guest';
 import SignIn from '../features/Auth/pages/SignIn';
 import SignUp from '../features/Auth/pages/SignUp';
 import CreateUrlDashboard from '../features/URL/pages/CreateUrlDashboard';
+import Home from '../components/Home';
+
 
 export const router = createBrowserRouter([
   {
-    path: '/',
     element: <App />,
     children: [
       /* ---- Guest components in guest Routes ---- */
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
       {
         path: '*',
         element: <NotFound />,
+      },
+      {
+        path: '/',
+        element: <Home />,
       },
     ],
   },
