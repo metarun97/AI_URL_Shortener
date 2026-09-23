@@ -4,13 +4,14 @@ import dns from "dns";
 import connectToDb from './src/db/db.js';
 import { connectRedis } from "./src/db/redis.js";
 
+
 /* Set server dns menually */
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 /* Connect to mongodDb database */
 connectToDb();
 
-
+/* Set PORT for server */
 const PORT = process.env.PORT || 3000;
 
 /* Connect to redis database */

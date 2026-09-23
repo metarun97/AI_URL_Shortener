@@ -7,7 +7,7 @@ const urlSafetySchema = {
   properties: {
     isUrlSafe: {
       type: "boolean",
-      description: "Whether the URL is considered safe."
+      description: "Whether the URL is considered safe.",
     },
     risk: {
       type: "string",
@@ -47,7 +47,7 @@ Return the safety assessment according to the provided JSON schema.
 
   try {
     const response = await ai.interactions.create({
-      model: "gemini-3.6-flash",
+      model: "gemini-3.8-flash",
       input: prompt,
       response_format: {
         type: "text",
@@ -62,9 +62,9 @@ Return the safety assessment according to the provided JSON schema.
   catch (error) {
     console.error("[checkUrlSafety Error]:", error.message);
     return {
-      isUrlSafe: false,
-      risk: "high",
-      aiReason: "AI verification service unavailable."
+      isUrlSafe: null || false,
+      risk: "unknown",
+      aiReason: "AI UrlSafety service unavailable."
     };
   }
 }

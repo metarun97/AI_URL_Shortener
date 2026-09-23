@@ -161,16 +161,12 @@ export const deleteUrlController = async (req, res) => {
   try {
     const { id } = req?.params;
     const userId = req.user?.id;
-    // console.log(req.params)
-    // console.log(id, userId)
 
     /* Check for URL by it's id and user */
     const url = await urlModel.findOne({
       _id: id,
       user: userId,
     });
-
-    // console.log(url);
 
     if (!url) {
       return res.status(404).json({
@@ -192,6 +188,7 @@ export const deleteUrlController = async (req, res) => {
   } catch (error) {
 
     console.error("URL deletion Error:", error)
+
     return res.status(500).json({
       message: "Unable to delete URL",
     });

@@ -2,7 +2,7 @@ import express from "express";
 import { createShortUrlController, redirectShortUrlController, deleteUrlController, allUrlsConroller } from "../controllers/url.controller.js";
 import { protectedAuthUser } from '../middlewares/auth.middleware.js';
 import { createShortUrlValidation } from "../middlewares/authValidator.middleware.js";
-import { createUrlLimiter } from './../middlewares/rateLimit.middleware.js';
+import { createUrlLimiter, getAllUrlsLimiter } from './../middlewares/rateLimit.middleware.js';
 
 
 // Router created:-
@@ -14,7 +14,7 @@ const router = express.Router();
  * @description  for create a new shortURL
  * @access  private
  */
-router.post("/create", protectedAuthUser, createShortUrlValidation, createUrlLimiter, createShortUrlController);
+router.post("/create", createUrlLimiter, protectedAuthUser, createShortUrlValidation, createShortUrlController);
 
 
 /**
@@ -38,7 +38,7 @@ router.delete("/:id", protectedAuthUser, deleteUrlController);
  * @description  to get all currentUser's  short URLs
  * @access  private
  */
-router.get("/", protectedAuthUser, allUrlsConroller);
+router.get("/", getAllUrlsLimiter, protectedAuthUser, allUrlsConroller);
 
 
 export default router;

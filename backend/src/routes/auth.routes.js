@@ -13,7 +13,7 @@ const router = express.Router();
  * @description  for register a new user
  * @access  public
  */
-router.post("/register", registerUserValidation, registerUserLimiter, registerController);
+router.post("/register", registerUserLimiter, registerUserValidation, registerController);
 
 
 /**
@@ -21,7 +21,7 @@ router.post("/register", registerUserValidation, registerUserLimiter, registerCo
  * @description for login a user
  * @access public
  */
-router.post("/login", loginUserValidation, loginUserLimiter, loginController);
+router.post("/login", loginUserLimiter, loginUserValidation, loginController);
 
 
 /**
