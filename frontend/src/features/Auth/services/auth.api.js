@@ -2,35 +2,38 @@ import { api } from "../../../utils/axiosInstance"
 
 
 /* Register API */
-export const register = async ({ username, email, password }) => {
+export const signUp = async (data) => {
   try {
-    const response = await api.post("/api/auth/register", { username, email, password })
+    const response = await api.post("/api/auth/register", data)
 
     return response.data;
 
   } catch (error) {
 
-    console.log("Register Error:", error);
+    console.log("SignUp Error:", error?.response?.data?.message);
+
+    throw error;
   }
 }
 
 
 /* Login API */
-export const login = async ({ email, password }) => {
+export const signIn = async (data) => {
   try {
-    const response = await api.post("/api/auth/login", { email, password })
+    const response = await api.post("/api/auth/login", data)
 
     return response.data;
 
   } catch (error) {
+    console.log("LOGIN API ERROR:", error.response?.data);
 
-    console.log("Login Error:", error);
+    throw error;
   }
 }
 
 
 /* Logout API */
-export const logout = async () => {
+export const signOut = async () => {
   try {
     const response = await api.post("/api/auth/logout");
 
@@ -38,7 +41,9 @@ export const logout = async () => {
 
   } catch (error) {
 
-    console.log("Logout Error:", error);
+    console.log("Logout Error:", error?.response?.data?.message);
+
+    throw error;
   }
 }
 
@@ -52,6 +57,8 @@ export const getMe = async () => {
 
   } catch (error) {
 
-    console.log("GetMe Error:", error);
+    console.log("GetMe Error:", error?.response?.data?.message);
+
+    throw error;
   }
 }

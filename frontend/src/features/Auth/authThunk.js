@@ -1,50 +1,69 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { getMe, login, logout, register } from "./services/auth.api";
+import { signUp, signIn, signOut, getMe } from "./services/auth.api";
 
 
-/* Register Thunk */
-export const registerThunk = createAsyncThunk("auth/registerThunk", async (data, thunkApi) => {
+/* SignUp Thunk */
+export const signUpThunk = createAsyncThunk("auth/signUp", async (data, { rejectWithValue }) => {
   try {
-    const responseData = await register(data);
-    return responseData.user;
+    const response = await signUp(data);
+
+    // return response.user;
+    return response;
 
   } catch (error) {
-    return thunkApi.rejectWithValue(error?.responseData?.data?.message || "Register failed")
+
+
+    console.log("THUNK CATCH register:", error?.response?.data?.message);
+
+    return rejectWithValue(error?.response?.data?.message || "SignUp failed")
   }
 })
 
 
-/* Register Thunk */
-export const loginThunk = createAsyncThunk("auth/loginThunk", async (data, thunkApi) => {
+/* SignIn Thunk */
+export const signInThunk = createAsyncThunk("auth/signIn", async (data, { rejectWithValue }) => {
   try {
-    const responseData = await login(data);
-    return responseData.user;
+    const response = await signIn(data);
+
+    console.log("THUNK SUCCESS login:", response);
+
+    return response;
+    // return responseData.user;
 
   } catch (error) {
-    return thunkApi.rejectWithValue(error?.responseData?.data?.message || "Login failed")
+    console.log("THUNK CATCH:", error?.response?.data?.message);
+
+    // throw error;
+    return rejectWithValue(error?.response?.data.message || "SignIn failed")
   }
 })
 
 
-/* Logout Thunk */
-export const logoutThunk = createAsyncThunk("auth/logoutThunk", async (_, thunkApi) => {
+/* SignOut Thunk */
+export const signOutThunk = createAsyncThunk("auth/signOut", async (_, { rejectWithValue }) => {
   try {
-    const responseData = await logout();
-    return responseData.user;
+    const response = await signOut();
+
+    return response;
 
   } catch (error) {
-    return thunkApi.rejectWithValue(error?.responseData?.data?.message || "Logout failed")
+
+    return rejectWithValue(error?.response?.data?.message || "SignOut failed");
+
   }
 })
 
 
-/* Autheticated getMe Thunk */
-export const getMeThunk = createAsyncThunk("auth/getMeThunk", async (_, thunkApi) => {
+/* GetMe Thunk */
+export const getMeThunk = createAsyncThunk("auth/getMe", async (_, { rejectWithValue }) => {
   try {
-    const responseData = await getMe();
-    return responseData.user;
+    const response = await getMe();
+
+    return response;
 
   } catch (error) {
-    return thunkApi.rejectWithValue(error?.responseData?.data?.message || "User authentication failed")
+
+    return rejectWithValue(error?.response?.data?.message || "User authentication failed")
+
   }
 })

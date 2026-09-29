@@ -2,15 +2,17 @@ import { api } from "../../../utils/axiosInstance";
 
 
 /* Create Url API */
-export const createUrl = async ({ originalUrl }) => {
+export const createUrl = async (data) => {
   try {
-    const response = await api.post("/api/url/create", { originalUrl });
+    const response = await api.post("/api/url/create", data);
 
     return response.data;
 
   } catch (error) {
 
     console.log("URL creation Error:", error);
+
+    throw error;
 
   }
 }
@@ -27,6 +29,8 @@ export const getAllUrls = async () => {
 
     console.log("Get all URLs Error:", error);
 
+    throw error;
+
   }
 }
 
@@ -35,11 +39,14 @@ export const getAllUrls = async () => {
 export const deleteUrl = async (id) => {
   try {
     const response = await api.delete(`/api/url/${id}`);
+
     return response.data;
 
   } catch (error) {
 
     console.log("URL deletion Error:", error);
+
+    throw error;
 
   }
 }

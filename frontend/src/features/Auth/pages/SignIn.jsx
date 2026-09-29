@@ -2,38 +2,30 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
-import { loginThunk } from '../authThunk';
-
+import { signInThunk } from '../authThunk';
 
 const SignIn = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm();
-  // const { user, isAuthenticated, loading, error } = useSelector(
-  //   (state) => state.auth,
-  // );
-  // console.log(user);
+  const { register, handleSubmit, reset } = useForm();
 
-  const { urls, loading, error } = useSelector((state) => state.urls);
-  // console.log(urls);
+  // const { isLoading } = useSelector((state) => state.urls);
+  const { user, error } = useSelector((state) => state.auth);
+  // console.log('MY REDUX USER', user);
+  // console.log('MY REDUX ERROR', error);
 
   const dispatch = useDispatch();
   const naviate = useNavigate();
 
-  /* Login handler */
-  const loginHandler = async ({ email, password }) => {
+  /* Login handler function */
+  const signInHandler = async (data) => {
     try {
-      const res = await dispatch(loginThunk({ email, password })).unwrap();
-      // console.log(res);
-
+      await dispatch(signInThunk(data)).unwrap();
       toast.success('SignIn Success!');
       reset();
-      naviate('/urldashboard');
+      naviate("/urlDashboard")
+
     } catch (error) {
-      console.log(error);
+      // console.log('ERROR: ', error);
+      console.error(error);
     }
   };
 
@@ -48,7 +40,7 @@ const SignIn = () => {
     <main>
       <div className="flex min-h-screen items-center justify-center bg-slate-200 p-6 dark:bg-slate-950">
         <form
-          onSubmit={handleSubmit(loginHandler)}
+          onSubmit={handleSubmit(signInHandler)}
           className="w-full max-w-sm rounded-2xl border border-slate-300 bg-white px-8 pb-7 pt-9 shadow-xl dark:border-slate-800 dark:bg-slate-900"
         >
           <h1 className="mb-1.5 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
@@ -97,17 +89,18 @@ const SignIn = () => {
           {/* Login Button */}
           <button
             type="submit"
-            disabled={loading}
+            // disabled={isLoading}
             className="mt-2 w-full rounded-lg bg-teal-800 px-4 py-2.5 text-[0.95rem] font-medium text-white transition hover:bg-teal-700 [focus-visible:outline] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-teal-300 dark:text-teal-950 dark:hover:bg-teal-200 dark:focus-visible:outline-teal-300 cursor-pointer"
           >
-            {loading ? 'Signing in…' : 'Sign in'}
+            {/* {isLoading ? 'Signing in…' : 'Sign in'} */}
+            SignIn
           </button>
 
           {/* Login error field */}
           <p
             role="status"
             aria-live="polite"
-            className="mt-4 min-h-[1.2em] text-sm text-red-700 dark:text-red-300"
+            className="mt-4 min-h-[1.2em] text-sm text-center text-red-700 dark:text-red-300"
           >
             {error}
           </p>

@@ -2,16 +2,19 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router';
 import { toast } from 'react-toastify';
-import { logoutThunk } from '../features/Auth/authThunk';
+import { signOutThunk } from './../features/Auth/authThunk';
 
 const Navbar = () => {
+
   const [open, setOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  // console.log(user);
+  console.log(user);
 
-  const logoutHandler = async () => {
-    await dispatch(logoutThunk()).unwrap();
+
+/* SignOut Handler */
+  const signOutHandler = async () => {
+    await dispatch(signOutThunk()).unwrap();
     toast.success('Logged Out!');
   };
 
@@ -23,7 +26,6 @@ const Navbar = () => {
 
   const buttonClass =
     'ml-3 rounded-lg border border-slate-300 px-3.5 py-1.5 text-sm font-medium text-slate-700 transition hover:border-teal-800 hover:text-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-800 dark:border-slate-700 dark:text-slate-300 dark:hover:border-teal-300 dark:hover:text-teal-300 dark:focus-visible:outline-teal-300 cursor-pointer';
-
 
   const Avatar = () =>
     user && (
@@ -85,7 +87,7 @@ const Navbar = () => {
           {user && (
             <button
               type="button"
-              onClick={logoutHandler}
+              onClick={signOutHandler}
               className={buttonClass}
             >
               Log out
@@ -96,7 +98,7 @@ const Navbar = () => {
         {/* Mobile toggle */}
         <button
           type="button"
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => setOpen(!open)}
           aria-expanded={open}
           aria-controls="mobile-menu"
           aria-label={open ? 'Close menu' : 'Open menu'}
@@ -169,7 +171,7 @@ const Navbar = () => {
 
           <button
             type="button"
-            onClick={logoutHandler}
+            onClick={signOutHandler}
             className="mt-3 w-full rounded-lg bg-teal-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-800 dark:bg-teal-300 dark:text-teal-950 dark:hover:bg-teal-200 dark:focus-visible:outline-teal-300 cursor-pointer"
           >
             Log out

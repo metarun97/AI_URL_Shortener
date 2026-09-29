@@ -1,21 +1,27 @@
-import { useDispatch } from 'react-redux';
-import { data, Outlet } from 'react-router';
+// import { useDispatch } from 'react-redux';
+import { Outlet } from 'react-router';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import { useEffect } from 'react';
 import { getMeThunk } from './features/Auth/authThunk';
-import Footer from './components/Footer';
+import { useDispatch } from 'react-redux';
 
 const App = () => {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    getAndSetCurrentUser();
-  }, [dispatch]);
+  // useEffect(() => {
+  //   const getAndSetCurrentUser = async () => {
+  //     await dispatch(getMeThunk()).unwrap();
+  //   };
+  //   getAndSetCurrentUser();
+  // }, [dispatch]);
 
-  const getAndSetCurrentUser = async () => {
-    const data = await dispatch(getMeThunk()).unwrap();
-    // console.log(data);
-  };
+  useEffect(() => {
+    const setCurrentUser = async () => {
+      await dispatch(getMeThunk()).unwrap();
+    };
+    setCurrentUser();
+  }, []);
 
   return (
     <>

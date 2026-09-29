@@ -8,7 +8,6 @@ import SignUp from '../features/Auth/pages/SignUp';
 import CreateUrlDashboard from '../features/URL/pages/CreateUrlDashboard';
 import Home from '../components/Home';
 
-
 export const router = createBrowserRouter([
   {
     element: <App />,
@@ -21,7 +20,6 @@ export const router = createBrowserRouter([
           { path: '/signUp', element: <SignUp /> },
         ],
       },
-
       /* ---- Protected components in protected Routes ---- */
       {
         element: <Protected />,

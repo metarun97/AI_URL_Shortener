@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getMeThunk, loginThunk, logoutThunk, registerThunk } from './authThunk';
+import { getMeThunk, signInThunk, signOutThunk, signUpThunk } from './authThunk';
 
 
 /* Initial state of authSlice */
@@ -25,31 +25,32 @@ const authSlice = createSlice({
     builder
 
       /* FOR-REGISTER */
-      .addCase(registerThunk.pending, (state) => {
+      .addCase(signUpThunk.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(registerThunk.fulfilled, (state, action) => {
+      .addCase(signUpThunk.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
       })
-      .addCase(registerThunk.rejected, (state, action) => {
-        state.error = action.payload;
+      .addCase(signUpThunk.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload || "Something went wrong";
       })
 
-      /* FOR - LOGIN  */
-      .addCase(loginThunk.pending, (state) => {
+      /* FOR-LOGIN  */
+      .addCase(signInThunk.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(loginThunk.fulfilled, (state, action) => {
+      .addCase(signInThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload?.user;
         state.isAuthenticated = true;
+        state.error = null;
       })
-      .addCase(loginThunk.rejected, (state, action) => {
-        state.error = action.payload;
+      .addCase(signInThunk.rejected, (state, action) => {
+        state.error = action.payload || "Something went wrong";
         state.loading = false;
       })
 
@@ -61,7 +62,7 @@ const authSlice = createSlice({
       })
       .addCase(getMeThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload?.user;
         state.isAuthenticated = true;
       })
       .addCase(getMeThunk.rejected, (state) => {
@@ -71,16 +72,16 @@ const authSlice = createSlice({
       })
 
       /* FOR LOGOUT */
-      .addCase(logoutThunk.pending, (state) => {
+      .addCase(signOutThunk.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(logoutThunk.fulfilled, (state) => {
+      .addCase(signOutThunk.fulfilled, (state) => {
         state.loading = false;
         state.user = null;
         state.isAuthenticated = false;
       })
-      .addCase(logoutThunk.rejected, (state, action) => {
+      .addCase(signOutThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

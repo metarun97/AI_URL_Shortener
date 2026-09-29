@@ -3,7 +3,7 @@ import { createUrlThunk, deleteUrlThunk, getAllUrlsThunk } from './urlThunk';
 
 const initialState = {
   urls: [],
-  loading: false,
+  isLoading: false,
   error: false,
 }
 
@@ -13,7 +13,7 @@ const urlSlice = createSlice({
   reducers: {
     deleteUrlReducer: (state) => {
       state.urls = null;
-      state.loading = false;
+      state.isLoading = false;
       state.error = false;
     }
   },
@@ -23,46 +23,49 @@ const urlSlice = createSlice({
 
       /* FOR-CREATE URL */
       .addCase(createUrlThunk.pending, (state) => {
-        state.loading = true;
+        state.isLoading = true;
         state.error = null;
       })
       .addCase(createUrlThunk.fulfilled, (state, action) => {
-        state.urls.push(action.payload);
-        state.loading = false;
+        console.log(action.payload)
+        state.urls.unshift(action.payload?.url);
+        state.isLoading = false;
+        state.error = null;
       })
       .addCase(createUrlThunk.rejected, (state, action) => {
-        state.loading = false;
+        console.log(action.payload)
+        // state.isLoading = false;
         state.error = action.payload;
       })
 
       /* FOR-GET ALL URLS */
       .addCase(getAllUrlsThunk.pending, (state) => {
-        state.loading = true;
+        state.isLoading = true;
         state.error = null;
       })
       .addCase(getAllUrlsThunk.fulfilled, (state, action) => {
         state.urls = action.payload;
-        state.loading = false;
+        state.isLoading = false;
       })
       .addCase(getAllUrlsThunk.rejected, (state, action) => {
-        state.loading = false;
+        state.isLoading = false;
         state.error = action.payload;
       })
 
-      /* FOR-DELETE A URL */
-      .addCase(deleteUrlThunk.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(deleteUrlThunk.fulfilled, (state, action) => {
-        const deleteId = action.meta.arg;
-        state.urls = state.urls.filter(url => url._id !== deleteId);
-        state.loading = false;
-      })
-      .addCase(deleteUrlThunk.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
+    /* FOR-DELETE A URL */
+    .addCase(deleteUrlThunk.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    })
+    .addCase(deleteUrlThunk.fulfilled, (state, action) => {
+      const deleteId = action.meta.arg;
+      state.urls = state.urls.filter(url => url._id !== deleteId);
+      state.isLoading = false;
+    })
+    .addCase(deleteUrlThunk.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    })
   }
 })
 

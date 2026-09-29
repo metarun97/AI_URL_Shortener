@@ -2,29 +2,27 @@ import { Link, useNavigate } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { registerThunk } from '../authThunk';
+import { signUpThunk } from '../authThunk';
 
 const SignUp = () => {
+
   const { register, handleSubmit, reset } = useForm();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { user, loading, error } = useSelector((state) => state.auth);
   // console.log(user);
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  /* Register handler */
-  const registerHandler = async ({ username, email, password }) => {
+  /* SignUp handler */
+  const signUpHandler = async (data) => {
     try {
-      const res = await dispatch(
-        registerThunk({ username, email, password }),
-      ).unwrap();
-
+      await dispatch(signUpThunk(data)).unwrap();
       toast.success('SignUp Success!');
-      navigate('/signin');
       reset();
+      navigate('/signin');
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      console.error(error);
     }
   };
 
@@ -35,13 +33,14 @@ const SignUp = () => {
     'dark:border-slate-700 dark:text-slate-100 dark:placeholder:text-slate-500 ' +
     'dark:focus:border-teal-300 dark:focus:shadow-[0_1px_0_0_theme(colors.teal.300)]';
 
-const buttonClass = "mt-2 w-full rounded-lg bg-teal-800 px-4 py-2.5 text-[0.95rem] font-medium text-white transition hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-teal-300 dark:text-teal-950 dark:hover:bg-teal-200 dark:focus-visible:outline-teal-300 cursor-pointer";
+  const buttonClass =
+    'mt-2 w-full rounded-lg bg-teal-800 px-4 py-2.5 text-[0.95rem] font-medium text-white transition hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-teal-300 dark:text-teal-950 dark:hover:bg-teal-200 dark:focus-visible:outline-teal-300 cursor-pointer';
 
   return (
     <main>
       <div className="flex min-h-screen items-center justify-center bg-slate-200 p-6 dark:bg-slate-950">
         <form
-          onSubmit={handleSubmit(registerHandler)}
+          onSubmit={handleSubmit(signUpHandler)}
           className="w-full max-w-sm rounded-2xl border border-slate-300 bg-white px-8 pb-7 pt-9 shadow-xl dark:border-slate-800 dark:bg-slate-900"
         >
           <h1 className="mb-1.5 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
@@ -108,18 +107,14 @@ const buttonClass = "mt-2 w-full rounded-lg bg-teal-800 px-4 py-2.5 text-[0.95re
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className={buttonClass}
-          >
+          <button type="submit" disabled={loading} className={buttonClass}>
             {loading ? 'Signing up…' : 'Sign up'}
           </button>
 
           <p
             role="status"
             aria-live="polite"
-            className="mt-4 min-h-[1.2em] text-sm text-red-700 dark:text-red-300"
+            className="mt-4 min-h-[1.2em] text-sm text-center text-red-700 dark:text-red-300"
           >
             {error}
           </p>
