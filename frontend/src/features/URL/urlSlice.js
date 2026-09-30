@@ -46,26 +46,27 @@ const urlSlice = createSlice({
       .addCase(getAllUrlsThunk.fulfilled, (state, action) => {
         state.urls = action.payload;
         state.isLoading = false;
+        state.error = null;
       })
       .addCase(getAllUrlsThunk.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       })
 
-    /* FOR-DELETE A URL */
-    .addCase(deleteUrlThunk.pending, (state) => {
-      state.isLoading = true;
-      state.error = null;
-    })
-    .addCase(deleteUrlThunk.fulfilled, (state, action) => {
-      const deleteId = action.meta.arg;
-      state.urls = state.urls.filter(url => url._id !== deleteId);
-      state.isLoading = false;
-    })
-    .addCase(deleteUrlThunk.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload;
-    })
+      /* FOR-DELETE A URL */
+      .addCase(deleteUrlThunk.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(deleteUrlThunk.fulfilled, (state, action) => {
+        const deleteId = action.meta.arg;
+        state.urls = state.urls.filter(url => url._id !== deleteId);
+        state.isLoading = false;
+      })
+      .addCase(deleteUrlThunk.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
   }
 })
 

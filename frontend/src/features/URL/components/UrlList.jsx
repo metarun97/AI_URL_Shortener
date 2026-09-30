@@ -15,7 +15,6 @@ const UrlList = () => {
   const [copiedId, setCopiedId] = useState(null);
   const { urls, loading } = useSelector((state) => state.urls);
   const dispatch = useDispatch();
-  console.log(urls);
 
   /* Handle copy function */
   const copyHandler = async (url) => {

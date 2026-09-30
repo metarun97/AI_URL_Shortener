@@ -9,13 +9,7 @@ import { useDispatch } from 'react-redux';
 const App = () => {
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   const getAndSetCurrentUser = async () => {
-  //     await dispatch(getMeThunk()).unwrap();
-  //   };
-  //   getAndSetCurrentUser();
-  // }, [dispatch]);
-
+  /* User set in redux state */
   useEffect(() => {
     const setCurrentUser = async () => {
       await dispatch(getMeThunk()).unwrap();
