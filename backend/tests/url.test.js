@@ -15,7 +15,7 @@ const redisClient = {
 
 jest.unstable_mockModule('../src/db/redis.js', () => ({ default: redisClient }));
 jest.unstable_mockModule('../src/service/ai.service.js', () => ({
-  checkUrlSafety: jest.fn(async () => JSON.stringify({
+  aiUrlSafetyCheck: jest.fn(async () => ({
     isUrlSafe: true,
     risk: 'low',
     aiReason: 'Test URL is safe',

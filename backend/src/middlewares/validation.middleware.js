@@ -4,13 +4,13 @@ import { body, validationResult } from "express-validator";
 const respondWithVelidationErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({ errors: errors.array() });
   }
-  next();
+  return next();
 }
 
-/* Register validation rules */
-export const registerUserValidation = [
+/* Register rules */
+export const registerRules = [
   body("username")
     .isString()
     .withMessage("username must be string")
@@ -35,8 +35,8 @@ export const registerUserValidation = [
   respondWithVelidationErrors
 ]
 
-/*  Login validation rules */
-export const loginUserValidation = [
+/*  Login rules */
+export const loginRules = [
 
   body("email")
     .notEmpty()
@@ -49,8 +49,8 @@ export const loginUserValidation = [
   respondWithVelidationErrors
 ]
 
-/* create URL validation rules */
-export const createShortUrlValidation = [
+/* create URL  rules */
+export const createUrlRules = [
   body("originalUrl")
     .trim()
     .notEmpty()

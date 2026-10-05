@@ -4,6 +4,11 @@ import dns from "dns";
 import connectToDb from './src/db/db.js';
 import { connectRedis } from "./src/db/redis.js";
 
+// import { aiUrlSafetyCheck } from "./src/service/ai.service.js";
+
+// const url = "https://sheryians.com/"
+// aiUrlSafetyCheck( url )
+
 
 /* Set server dns menually */
 dns.setServers(["1.1.1.1", "8.8.8.8"]);

@@ -1,12 +1,17 @@
 import express from "express";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 import authRoutes from './routes/auth.routes.js';
 import urlRoutes from './routes/url.routes.js';
 import statsRoutes from './routes/stats.routes.js';
 import cors from "cors";
 
+
 /* Server created */
 const app = express({});
+
+/* Track activities of the server */
+app.use(morgan("dev"));
 
 /* Remove cors error */
 app.use(cors({
@@ -19,7 +24,6 @@ app.use(express.json());
 
 /* Middleware to read browser's cookie */
 app.use(cookieParser());
-
 
 /* Auth routes prefix */
 app.use("/api/auth", authRoutes);

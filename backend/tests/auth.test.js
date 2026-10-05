@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import { aiUrlSafetyCheck } from './../src/service/ai.service';
 
 const redisStore = new Map();
 const redisClient = {
@@ -14,7 +15,7 @@ const redisClient = {
 };
 
 jest.unstable_mockModule('../src/db/redis.js', () => ({ default: redisClient }));
-jest.unstable_mockModule('../src/config/genAI.credentials.js', () => ({ default: {} }));
+jest.unstable_mockModule('./../src/service/ai.service.js', () => ({ aiUrlSafetyCheck }));
 
 process.env.JWT_SECRET = 'auth-test-secret';
 process.env.NODE_ENV = 'test';

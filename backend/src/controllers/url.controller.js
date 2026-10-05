@@ -1,15 +1,14 @@
-// Imported items:-
 import urlModel from "../models/url.model.js";
-import { createShortUrlService } from "../service/shortUrl.service.js";
-import { checkUrlSafety } from '../service/ai.service.js';
+import aiUrlSafetyCheck from "../services/ai.service.js";
+import generateShortCodeId from '../services/shortCodeId.service.js';
 
 
 /**
- * @name createShortUrlController
+ * @name createShortUrl
  * @description create a new shortUrl expects originalUrl in req.body
  * @access private
  */
-export const createShortUrlController = async (req, res) => {
+export const createShortUrl = async (req, res) => {
   try {
     const { originalUrl } = req.body;
     const userId = req.user?.id;
@@ -17,9 +16,9 @@ export const createShortUrlController = async (req, res) => {
 
     /* Check for user */
     if (!userId) {
-      return res.status(401).json({
-        message: "Unoutherized: User not found",
-      });
+      return res.status(404).json({
+        message: "User not found!",
+      })
     }
 
     /* Url check for conflict */
@@ -30,47 +29,44 @@ export const createShortUrlController = async (req, res) => {
 
     if (urlExists) {
       return res.status(409).json({
-        message: "URL alredy exists",
-      });
+        message: "URL already exists!",
+      })
     }
-
-    /* url safety check by Gemini AI */
-    let safetyRes;
-    try {
-      safetyRes = await checkUrlSafety(originalUrl);
-
-    } catch (error) {
-      /* If Gemini then execute this */
-      console.log("AI check failed:", error.message);
-    }
-
-    const { isUrlSafe, risk, aiReason } = safetyRes;
 
     /* Create shorUrl in MongoDB */
-    const newUrl = await createShortUrlService(originalUrl, userId, isUrlSafe, risk, aiReason);
+    const shortCodeId = generateShortCodeId(originalUrl, userId);
 
-    // final response:-
+    /* AI URL safety check */
+    const URlSafety = await aiUrlSafetyCheck(originalUrl);
+
+    /* Creating newShortUrl */
+    const newUrl = await urlModel.create({
+      originalUrl: originalUrl,
+      shortCode: shortCodeId,
+      user: userId,
+      isUrlSafe: URlSafety?.isUrlSafe,
+      risk: URlSafety?.risk,
+      aiReason: URlSafety?.aiReason
+    });
+
+    /* final response */
     return res.status(201).json({
-      message: "Short URL created successfully",
-      url: {
-        id: newUrl._id,
-        originalUrl: newUrl.originalUrl,
-        shortCode: newUrl.shortCode,
-        shortUrl: `${process.env.BASE_URL}/${newUrl.shortCode}`,
-      },
-      safety: {
+      message: "Short URL created successfully!",
+      originalUrl: newUrl.originalUrl,
+      user: userId.toString(),
+      shortCode: newUrl.shortCode,
+      newUrl: {
         isUrlSafe: newUrl.isUrlSafe,
         risk: newUrl.risk,
         aiReason: newUrl.aiReason,
       }
-
     });
 
   } catch (error) {
-    console.error("URL creation error", error);
+    console.error(error);
 
     return res.status(500).json({
-      message: "Unable to create URL",
+      message: "Internal server error!",
     });
   }
 
@@ -78,21 +74,22 @@ export const createShortUrlController = async (req, res) => {
 
 
 /**
- * @name redirectShortUrlController
+ * @name redirectShortUrl
  * @description user can redirect to created shortUrl
  * @access public
  */
-export const redirectShortUrlController = async (req, res) => {
+export const redirectShortUrl = async (req, res) => {
   try {
-    const shortUrlId = req.params.shortCode;
+    const { shortCode } = req.params;
 
-    /* Url check for availabelity */
-    const url = await urlModel.findOne({ shortCode: shortUrlId });
+    /* Url check for availablity */
+    const url = await urlModel.findOne({ shortCode });
+
 
     if (!url) {
       return res.status(404).json({
-        message: "URL not found",
-      });
+        message: "URL not found!",
+      })
     }
 
     /* If url found redirect and inc clicks */
@@ -103,11 +100,12 @@ export const redirectShortUrlController = async (req, res) => {
 
     return res.redirect(url.originalUrl);
 
+
   } catch (error) {
-    console.error("URL redirection error");
+    console.error(error);
 
     return res.status(500).json({
-      message: "Unable to redirect on URL",
+      message: "Internal server error!",
     });
 
   }
@@ -115,20 +113,20 @@ export const redirectShortUrlController = async (req, res) => {
 
 
 /**
- * @name allUrlsConroller
- * @description get all created shortUrl by current user
+ * @name meUserUrls
+ * @description get all created shortUrls of current user
  * @access private
  */
-export const allUrlsConroller = async (req, res) => {
+export const meUserUrls = async (req, res) => {
   try {
     const userId = req.user?.id;
 
-
     /* Check for user */
     if (!userId) {
-      return res.status(401).json({
-        message: "Unauthorized: User not found",
-      });
+      return res.status(404).json({
+        message: "User not found!",
+      })
+
     }
 
     /* Fetch all created shorUrls from MongoDB database */
@@ -138,26 +136,27 @@ export const allUrlsConroller = async (req, res) => {
 
     /* Final response */
     return res.status(200).json({
-      message: "URLs fetched successfully",
+      message: "URLs fetched successfully!",
       count: urls.length,
       urls: urls,
     });
 
   } catch (error) {
-    console.error("All URLs fetching Error ", error);
+    console.error(error);
+
     return res.status(500).json({
-      message: "Unable to fetch All URLs",
+      message: "Internal server error!",
     });
   }
 };
 
 
 /**
- * @name deleteUrlController
- * @description currentUser can delete shortUrl which is created
+ * @name deleteUrl
+ * @description currentUser can delete shortUrl which was created by him/her
  * @access private
  */
-export const deleteUrlController = async (req, res) => {
+export const deleteUrl = async (req, res) => {
   try {
     const { id } = req?.params;
     const userId = req.user?.id;
@@ -169,9 +168,9 @@ export const deleteUrlController = async (req, res) => {
     });
 
     if (!url) {
-      return res.status(404).json({
-        message: "Url not found & you are not authorized to delete it",
-      });
+      return res.status(403).json({
+        message: "Access denied!"
+      })
     }
 
     /* Check for delete the URL  */
@@ -182,16 +181,14 @@ export const deleteUrlController = async (req, res) => {
 
     /* Final response */
     return res.status(200).json({
-      messsage: "Url deleted successfully",
+      messsage: "Url deleted successfully!",
     });
 
   } catch (error) {
-
-    console.error("URL deletion Error:", error)
+    console.error(error)
 
     return res.status(500).json({
-      message: "Unable to delete URL",
+      message: "Internal server error!",
     });
-
   }
 };

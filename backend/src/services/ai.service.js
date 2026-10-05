@@ -2,6 +2,7 @@ import { GoogleGenAI } from '@google/genai';
 import { z } from "zod";
 
 
+/* Url Safety schema */
 const urlSafetySchema = {
   type: "object",
   properties: {
@@ -22,26 +23,22 @@ const urlSafetySchema = {
   required: ["isUrlSafe", "risk", "aiReason"]
 };
 
+const URLSchema = z.fromJSONSchema(urlSafetySchema);
 
-const urLSchema = z.fromJSONSchema(urlSafetySchema);
-
-
+/* Gemini instance created */
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
-/* Check safety by AI */
-export const checkUrlSafety = async (url) => {
+/* Check safety by AI response */
+const aiUrlSafetyCheck = async (originalUrl) => {
 
   const prompt = `
 Analyze the following URL for security risks:
-
-URL: ${url}
-
+URL: ${originalUrl}
 Determine whether the URL is safe or potentially malicious.
 Check for signs of phishing, suspicious domains, impersonation, scams,
 or other potentially harmful patterns.
-
 Return the safety assessment according to the provided JSON schema.
 `;
 
@@ -56,15 +53,16 @@ Return the safety assessment according to the provided JSON schema.
       }
     })
 
-    return urLSchema.parse(JSON.parse(response.output_text));
-
+    return URLSchema.parse(JSON.parse(response.output_text));
   }
   catch (error) {
-    console.error("[checkUrlSafety Error]:", error.message);
+    console.error(error.message);
     return {
-      isUrlSafe: null || false,
-      risk: "unknown",
-      aiReason: "AI UrlSafety service unavailable."
+      isUrlSafe: null || "Unknown",
+      risk: null || "Unknown",
+      aiReason: "AI UrlSafety service Unavailable!"
     };
   }
 }
+
+export default aiUrlSafetyCheck;

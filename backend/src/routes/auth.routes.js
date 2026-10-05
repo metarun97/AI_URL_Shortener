@@ -1,8 +1,8 @@
 import express from 'express';
-import { registerController, loginController, getMeController, logoutController } from '../controllers/auth.controller.js';
-import { loginUserValidation, registerUserValidation } from '../middlewares/authValidator.middleware.js';
-import { protectedAuthUser } from '../middlewares/auth.middleware.js';
-import { loginUserLimiter, registerUserLimiter } from '../middlewares/rateLimit.middleware.js';
+import * as authController from '../controllers/auth.controller.js';
+import * as authValidation from '../middlewares/validation.middleware.js';
+import * as authMiddleware from '../middlewares/auth.middleware.js';
+import * as ratelimiter from '../middlewares/rateLimit.middleware.js';
 
 
 /* Router created */
@@ -13,7 +13,7 @@ const router = express.Router();
  * @description  for register a new user
  * @access  public
  */
-router.post("/register", registerUserLimiter, registerUserValidation, registerController);
+router.post("/register", ratelimiter.registerUserLimiter, authValidation.registerRules, authController.register);
 
 
 /**
@@ -21,7 +21,7 @@ router.post("/register", registerUserLimiter, registerUserValidation, registerCo
  * @description for login a user
  * @access public
  */
-router.post("/login", loginUserLimiter, loginUserValidation, loginController);
+router.post("/login", ratelimiter.loginUserLimiter, authValidation.loginRules, authController.login);
 
 
 /**
@@ -29,14 +29,14 @@ router.post("/login", loginUserLimiter, loginUserValidation, loginController);
  * @description for logout the current user
  * @access public
  */
-router.post("/logout", logoutController);
+router.post("/logout", authController.logout);
 
 
 /**
  * @routes  /api/auth/get-me
- * @description for get the current logged in user details
+ * @description for get the current logged in user
  * @access private
  */
-router.get("/get-me", protectedAuthUser, getMeController)
+router.get("/get-me", authMiddleware.protectedAuthUser, authController.getMe)
 
 export default router;

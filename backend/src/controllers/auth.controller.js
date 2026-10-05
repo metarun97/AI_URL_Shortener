@@ -7,11 +7,11 @@ import redisClient from '../db/redis.js';
 
 
 /**
- * @name registerController
+ * @name register
  * @description register a new user axpects username, email and password in req.body
  * @access public
  */
-export const registerController = async (req, res) => {
+export const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -25,9 +25,11 @@ export const registerController = async (req, res) => {
 
     if (existingUser) {
       return res.status(409).json({
-        message: 'User already exists'
-      });
+        message: "User already exists!",
+      })
+
     }
+
     // Make password hash:-
     const hash = await bcrypt.hash(password, 10);
 
@@ -54,28 +56,31 @@ export const registerController = async (req, res) => {
 
     /*  Final response */
     return res.status(201).json({
-      message: 'User registered successfully',
+      message: 'User registered successfully!',
       user: {
         id: user._id,
         username: user.username,
         email: user.email,
         avatar: user.avatar,
       },
+
     });
   } catch (error) {
-    console.error('Register error:', error);
+    console.error(error);
+
     return res.status(500).json({
-      message: "User is unable to Register"
+      message: "Internal server error!",
     });
   }
 }
 
+
 /**
- * @name loginController
+ * @name login
  * @description login a user axpects email and password in req.body
  * @access public
  */
-export const loginController = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -84,8 +89,9 @@ export const loginController = async (req, res) => {
 
     if (!user) {
       return res.status(401).json({
-        message: 'Invalid Email: User not found',
-      });
+        message: "Invalid email or password!",
+      })
+
     }
 
     /* Check for user's by password */
@@ -93,8 +99,8 @@ export const loginController = async (req, res) => {
 
     if (!isPasswordValid) {
       return res.status(401).json({
-        message: 'Invalid credential: Password not matched'
-      });
+        message: "Invalid email or password!",
+      })
     }
 
     /* Give token to login user and save in cookie */
@@ -109,7 +115,7 @@ export const loginController = async (req, res) => {
 
     /* Final response */
     res.status(200).json({
-      message: 'User logged in successfully',
+      message: 'User logged in successfully!',
       user: {
         id: user._id,
         username: user.username,
@@ -117,33 +123,36 @@ export const loginController = async (req, res) => {
         avatar: user.avatar,
       },
     });
+
   } catch (error) {
-    console.error('Login error:', error);
+    console.error(error);
+
     res.status(500).json({
-      message: "User unable to Login",
+      message: "Internal server error!",
     });
   }
 }
 
+
 /**
- * @name getMeController
+ * @name getMe
  * @description get the current logged in user
  * @access private
  */
-export const getMeController = async (req, res) => {
+export const getMe = async (req, res) => {
   try {
     const user = await userModel.findById(req.user?.id);
 
-    /* Check for user if not found */
+    /* Check if user */
     if (!user) {
       return res.status(404).json({
-        message: "Unotherized: User not found",
+        message: "User not found!",
       })
     }
 
     /* If user found then give final response */
     res.status(200).json({
-      message: "Current User fetched successfully",
+      message: "Current User fetched successfully!",
       user: {
         id: user._id,
         username: user.username,
@@ -153,33 +162,36 @@ export const getMeController = async (req, res) => {
     })
 
   } catch (error) {
-    console.error('CurrentUser error:', error);
+    console.error(error);
+
     res.status(500).json({
-      message: "Unable to fetch currentUser",
+      message: "Internal server error!",
     })
   }
 }
 
+
 /**
- * @name logoutController
+ * @name logout
  * @description logout the current logged in user
  * @access public
  */
-export const logoutController = async (req, res) => {
+export const logout = async (req, res) => {
   try {
     const token = req.cookies?.token;
-    const decoded = jwt.decode(token);
 
     /* Check availablity of token in cookies  */
     if (!token) {
-      return res.status(401).json({
+      return res.status(404).json({
         success: true,
-        message: "token not fond",
+        message: "Token not found!",
       });
     }
 
+    const decoded = jwt.decode(token);
+
     /* Find Remaining time of token */
-    const remainingTime = decoded.exp - Math.floor(Date.now / 1000);
+    const remainingTime = decoded.exp - Math.floor(Date.now() / 1000);
 
     /* Blacklist the token by Redis */
     if (remainingTime > 0) {
@@ -200,13 +212,14 @@ export const logoutController = async (req, res) => {
     });
 
     return res.status(200).json({
-      message: "User logout successfully",
+      message: "User logout successfully!",
     });
 
   } catch (error) {
-    console.error('Logout error:', error);
+    console.error(error);
+
     res.status(500).json({
-      message: "User Unable to logout ",
+      message: "Internal server error!",
     })
   }
 }

@@ -1,8 +1,8 @@
 import express from "express";
-import { createShortUrlController, redirectShortUrlController, deleteUrlController, allUrlsConroller } from "../controllers/url.controller.js";
-import { protectedAuthUser } from '../middlewares/auth.middleware.js';
-import { createShortUrlValidation } from "../middlewares/authValidator.middleware.js";
-import { createUrlLimiter, getAllUrlsLimiter } from './../middlewares/rateLimit.middleware.js';
+import * as urlController from "../controllers/url.controller.js";
+import * as authMiddleware from '../middlewares/auth.middleware.js';
+import * as urlValidation from "../middlewares/validation.middleware.js";
+import * as rateLimiter from '../middlewares/rateLimit.middleware.js';
 
 
 // Router created:-
@@ -14,7 +14,7 @@ const router = express.Router();
  * @description  for create a new shortURL
  * @access  private
  */
-router.post("/create", createUrlLimiter, protectedAuthUser, createShortUrlValidation, createShortUrlController);
+router.post("/create", rateLimiter.createUrlLimiter, authMiddleware.protectedAuthUser, urlValidation.createUrlRules, urlController.createShortUrl);
 
 
 /**
@@ -22,7 +22,7 @@ router.post("/create", createUrlLimiter, protectedAuthUser, createShortUrlValida
  * @description  for redirect to the shortUrl
  * @access  public
  */
-router.get("/:shortCode", redirectShortUrlController);
+router.get("/:shortCode", urlController.redirectShortUrl);
 
 
 /**
@@ -30,7 +30,7 @@ router.get("/:shortCode", redirectShortUrlController);
  * @description  for currentUser to delete the shortUrl
  * @access  private
  */
-router.delete("/:id", protectedAuthUser, deleteUrlController);
+router.delete("/:id", authMiddleware.protectedAuthUser, urlController.deleteUrl);
 
 
 /**
@@ -38,7 +38,7 @@ router.delete("/:id", protectedAuthUser, deleteUrlController);
  * @description  to get all currentUser's  short URLs
  * @access  private
  */
-router.get("/", getAllUrlsLimiter, protectedAuthUser, allUrlsConroller);
+router.get("/", rateLimiter.getAllUrlsLimiter, authMiddleware.protectedAuthUser, urlController.meUserUrls);
 
 
 export default router;

@@ -9,16 +9,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
+
   email: {
     type: String,
     unique: true,
-    required:true,
+    required: true,
   },
+
   password: {
     type: String,
     required: true,
     select: false,
   },
+
   avatar: {
     type: String,
     required: false,
@@ -27,6 +30,7 @@ const userSchema = new mongoose.Schema({
       return generateGravatarUrl(this.email);
     },
   }
+
 }, { timestamps: true })
 
 
