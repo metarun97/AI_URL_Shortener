@@ -13,7 +13,7 @@ const app = express({});
 /* Track activities of the server */
 app.use(morgan("dev"));
 
-/* Remove cors error */
+/* Middleware to remove cors policy error */
 app.use(cors({
   origin: "http://localhost:5173",
   credentials: true,

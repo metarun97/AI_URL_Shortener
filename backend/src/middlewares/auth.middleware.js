@@ -5,7 +5,8 @@ import redisClient from "../db/redis.js";
 
 /* Protected auth user */
 export const protectedAuthUser = async (req, res, next) => {
-  const token = req?.cookies?.token;
+
+  const token = req.cookies?.token;
 
   // If token not found:-
   if (!token) {

@@ -9,7 +9,7 @@ import * as ratelimiter from '../middlewares/rateLimit.middleware.js';
 const router = express.Router();
 
 /**
- * @routes  /api/auth/register
+ * @route  /api/auth/register
  * @description  for register a new user
  * @access  public
  */
@@ -17,7 +17,7 @@ router.post("/register", ratelimiter.registerUserLimiter, authValidation.registe
 
 
 /**
- * @routes  /api/auth/login
+ * @route  /api/auth/login
  * @description for login a user
  * @access public
  */
@@ -25,7 +25,7 @@ router.post("/login", ratelimiter.loginUserLimiter, authValidation.loginRules, a
 
 
 /**
- * @routes  /api/auth/logout
+ * @route  /api/auth/logout
  * @description for logout the current user
  * @access public
  */
@@ -33,8 +33,8 @@ router.post("/logout", authController.logout);
 
 
 /**
- * @routes  /api/auth/get-me
- * @description for get the current logged in user
+ * @route  /api/auth/get-me
+ * @description to get the current logged in user
  * @access private
  */
 router.get("/get-me", authMiddleware.protectedAuthUser, authController.getMe)

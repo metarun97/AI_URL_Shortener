@@ -18,20 +18,17 @@ const urlSchema = new mongoose.Schema({
 
   isUrlSafe: {
     type: Boolean,
-    required: [true, "URL safety is required"],
     default: null,
   },
 
   risk: {
     type: String,
-    enum: ["unknown", "low", "medium", "high"],
-    required: true,
-    default: null,
+    enum: ["low", "medium", "high", "unknown"],
+    default: "unknown",
   },
 
   aiReason: {
     type: String,
-    required: [true, "aiReason is required"],
     default: null,
   },
 

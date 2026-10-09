@@ -12,7 +12,7 @@ const urlSafetySchema = {
     },
     risk: {
       type: "string",
-      enum: ["low", "medium", "high"],
+      enum: ["low", "medium", "high", "unknown"],
       description: "The security risk level of the URL."
     },
     aiReason: {
@@ -58,9 +58,9 @@ Return the safety assessment according to the provided JSON schema.
   catch (error) {
     console.error(error.message);
     return {
-      isUrlSafe: null || "Unknown",
-      risk: null || "Unknown",
-      aiReason: "AI UrlSafety service Unavailable!"
+      isUrlSafe: null,
+      risk: "unknown",
+      aiReason: null,
     };
   }
 }
