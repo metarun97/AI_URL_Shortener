@@ -8,15 +8,25 @@ const redisClient = createClient({
 })
 
 
-/* Redis client connect successfully code */
-redisClient.on("ready", () => {
-  console.log("Redis connected successfully");
+/* Redis error listener */
+redisClient.on("error", (error) => {
+  console.error("Redis connection error:", error.message);
+})
+
+/* Redis client reconnecting */
+redisClient.on("reconnecting", () => {
+  console.log("Redis reconnecting...");
 });
 
-/* Redis client connect error code */
-redisClient.on("error", (error) => {
-  console.log("Redis client Error", error);
-})
+/* Redis client connect successfully code */
+redisClient.on("ready", () => {
+  console.log("Redis connected successfully!");
+});
+
+/* Redis client connection ending */
+redisClient.on("end", () => {
+  console.log("Redis connection closed!");
+});
 
 
 /* connectRedis function */

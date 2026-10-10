@@ -28,23 +28,26 @@ const URLSchema = z.fromJSONSchema(urlSafetySchema);
 /* Gemini instance created */
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
+  httpOptions: {
+    timeout: 15000,
+    retryOptions: {
+      attempts: 1,
+    }
+  }
 });
 
 /* Check safety by AI response */
 const aiUrlSafetyCheck = async (originalUrl) => {
 
-  const prompt = `
-Analyze the following URL for security risks:
+
+  const prompt = `Assess this URL for potential phishing,
+impersonation, and suspicious domain patterns.
 URL: ${originalUrl}
-Determine whether the URL is safe or potentially malicious.
-Check for signs of phishing, suspicious domains, impersonation, scams,
-or other potentially harmful patterns.
-Return the safety assessment according to the provided JSON schema.
-`;
+Return a concise assessment using the supplied JSON schema.`;
 
   try {
     const response = await ai.interactions.create({
-      model: "gemini-3.8-flash",
+      model: "gemini-3.5-flash-lite",
       input: prompt,
       response_format: {
         type: "text",
@@ -53,10 +56,12 @@ Return the safety assessment according to the provided JSON schema.
       }
     })
 
-    return URLSchema.parse(JSON.parse(response.output_text));
+    const resResult = URLSchema.parse(JSON.parse(response.output_text));
+
+    return resResult;
   }
   catch (error) {
-    console.error(error.message);
+    console.error("AI Service Error: ", error.message);
     return {
       isUrlSafe: null,
       risk: "unknown",

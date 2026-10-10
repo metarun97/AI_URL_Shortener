@@ -9,6 +9,7 @@ import generateShortCodeId from '../services/shortCodeId.service.js';
  * @access private
  */
 export const createShortUrl = async (req, res) => {
+
   try {
     const { originalUrl } = req.body;
     const userId = req.user?.id;
@@ -36,8 +37,11 @@ export const createShortUrl = async (req, res) => {
     /* Create shorUrl in MongoDB */
     const shortCodeId = generateShortCodeId(originalUrl, userId);
 
+
     /* AI URL safety check */
     const URlSafety = await aiUrlSafetyCheck(originalUrl);
+
+
 
     /* Creating newShortUrl */
     const newUrl = await urlModel.create({
@@ -48,6 +52,8 @@ export const createShortUrl = async (req, res) => {
       risk: URlSafety?.risk,
       aiReason: URlSafety?.aiReason
     });
+
+
 
     /* final response */
     return res.status(201).json({
@@ -68,8 +74,9 @@ export const createShortUrl = async (req, res) => {
     return res.status(500).json({
       message: "Internal server error!",
     });
+  } finally {
+    console.timeEnd("TOTAL_REQUEST");
   }
-
 };
 
 
