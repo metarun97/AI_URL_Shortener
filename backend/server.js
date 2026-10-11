@@ -2,7 +2,7 @@ import "dotenv/config";
 import app from './src/app.js';
 import dns from "dns";
 import connectToDb from './src/db/db.js';
-import { connectRedis } from "./src/db/redis.js";
+import * as redis from "./src/db/redis.js";
 
 
 /* Set server dns menually */
@@ -15,7 +15,7 @@ connectToDb();
 const PORT = process.env.PORT || 3000;
 
 /* Connect to redis database */
-await connectRedis();
+await redis.connectRedis();
 
 /* Server started */
 app.get("/health", (req, res) => {
@@ -27,5 +27,5 @@ app.get("/health", (req, res) => {
 
 /* Server started */
 app.listen(PORT, () => {
-  console.log(`Server is running on port http://localhost:${PORT}`);
+  console.log(`Server Running on PORT: ${PORT}`);
 })

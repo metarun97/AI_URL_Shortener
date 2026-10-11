@@ -1,0 +1,30 @@
+# NodeJs runtime
+FROM node:22-bookworm-slim
+
+
+# Setting working directory in container
+WORKDIR /app
+
+
+# Copying dependency files
+COPY package.json package-lock.json ./
+
+
+# Installing production dependencies
+RUN npm ci --omit==dev
+
+
+# Copying backend source code
+COPY  . .
+
+
+# Setting default environment
+ENV NODE_ENV=production
+
+
+# Port for documentation
+EXPOSE 3000
+
+
+# Start the backend
+CMD [ "npm","start" ]

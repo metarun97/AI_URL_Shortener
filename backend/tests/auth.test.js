@@ -3,7 +3,14 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { aiUrlSafetyCheck } from './../src/service/ai.service';
+
+const aiCheck = {
+  aiUrlSafetyCheck: async () => ({
+    isUrlSafe: true,
+    risk: 'low',
+    aiReason: 'Mocked check for tests',
+  }),
+};
 
 const redisStore = new Map();
 const redisClient = {
@@ -15,7 +22,7 @@ const redisClient = {
 };
 
 jest.unstable_mockModule('../src/db/redis.js', () => ({ default: redisClient }));
-jest.unstable_mockModule('./../src/service/ai.service.js', () => ({ aiUrlSafetyCheck }));
+jest.unstable_mockModule('../src/services/ai.service.js', () => ({ default: aiCheck.aiUrlSafetyCheck }));
 
 process.env.JWT_SECRET = 'auth-test-secret';
 process.env.NODE_ENV = 'test';
@@ -52,7 +59,7 @@ const api = async (method, path, body, cookie) => {
 };
 
 beforeAll(async () => {
-  consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+  consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
   mongoServer = await MongoMemoryServer.create();
   await mongoose.connect(mongoServer.getUri());
   server = await new Promise((resolve) => {
@@ -81,7 +88,7 @@ describe('Auth API', () => {
 
     expect(response.status).toBe(201);
     expect(response.body).toMatchObject({
-      message: 'User registered successfully',
+      message: 'User registered successfully!',
       user: { username: user.username, email: user.email },
     });
     expect(response.headers.get('set-cookie')).toMatch(/^token=/);
@@ -96,7 +103,7 @@ describe('Auth API', () => {
     const response = await api('POST', '/api/auth/register', user);
 
     expect(response.status).toBe(409);
-    expect(response.body).toEqual({ message: 'User already exists' });
+    expect(response.body).toEqual({ message: 'User already exists!' });
   });
 
   test('rejects invalid registration input', async () => {
@@ -122,7 +129,7 @@ describe('Auth API', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toMatchObject({
-      message: 'User logged in successfully',
+      message: 'User logged in successfully!',
       user: { username: user.username, email: user.email },
     });
     expect(response.headers.get('set-cookie')).toMatch(/^token=/);
@@ -158,7 +165,7 @@ describe('Auth API', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toMatchObject({
-      message: 'Current User fetched successfully',
+      message: 'Current User fetched successfully!',
       user: { username: user.username, email: user.email },
     });
   });
@@ -167,7 +174,7 @@ describe('Auth API', () => {
     const response = await api('GET', '/api/auth/get-me');
 
     expect(response.status).toBe(404);
-    expect(response.body).toEqual({ message: 'Unotherized: token is required' });
+    expect(response.body).toEqual({ message: 'Unotherized!' });
   });
 
   test('logs out and clears the auth cookie', async () => {
@@ -175,14 +182,14 @@ describe('Auth API', () => {
     const response = await api('POST', '/api/auth/logout', undefined, `token=${token}`);
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ message: 'User logout successfully' });
+    expect(response.body).toEqual({ message: 'User logout successfully!' });
     expect(response.headers.get('set-cookie')).toMatch(/^token=;/);
   });
 
   test('rejects logout without a token', async () => {
     const response = await api('POST', '/api/auth/logout');
 
-    expect(response.status).toBe(401);
-    expect(response.body).toEqual({ success: true, message: 'token not fond' });
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({ success: true, message: 'Token not found!' });
   });
 });

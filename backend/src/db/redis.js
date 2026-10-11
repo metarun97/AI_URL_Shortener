@@ -1,10 +1,9 @@
-// Imported items:-
 import { createClient } from "redis";
 
 
 /*  Create redisClient instance */
 const redisClient = createClient({
-  url: process.env.REDIS_URL,
+  url: process.env.REDIS_URI,
 })
 
 

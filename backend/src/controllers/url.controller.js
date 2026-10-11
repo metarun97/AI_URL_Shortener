@@ -37,11 +37,8 @@ export const createShortUrl = async (req, res) => {
     /* Create shorUrl in MongoDB */
     const shortCodeId = generateShortCodeId(originalUrl, userId);
 
-
     /* AI URL safety check */
     const URlSafety = await aiUrlSafetyCheck(originalUrl);
-
-
 
     /* Creating newShortUrl */
     const newUrl = await urlModel.create({
@@ -74,8 +71,6 @@ export const createShortUrl = async (req, res) => {
     return res.status(500).json({
       message: "Internal server error!",
     });
-  } finally {
-    console.timeEnd("TOTAL_REQUEST");
   }
 };
 

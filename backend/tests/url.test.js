@@ -14,12 +14,12 @@ const redisClient = {
 };
 
 jest.unstable_mockModule('../src/db/redis.js', () => ({ default: redisClient }));
-jest.unstable_mockModule('../src/service/ai.service.js', () => ({
-  aiUrlSafetyCheck: jest.fn(async () => ({
+jest.unstable_mockModule('../src/services/ai.service.js', () => ({
+  default: async () => ({
     isUrlSafe: true,
     risk: 'low',
     aiReason: 'Test URL is safe',
-  })),
+  }),
 }));
 
 process.env.JWT_SECRET = 'url-test-secret';
@@ -109,7 +109,7 @@ describe('URL API', () => {
 
     expect(response.status).toBe(201);
     expect(response.body).toMatchObject({
-      message: 'Short URL created successfully',
+      message: 'Short URL created successfully!',
       originalUrl: 'https://example.com/docs',
       user: user._id.toString(),
       shortCode: expect.any(String),
@@ -125,7 +125,7 @@ describe('URL API', () => {
     });
 
     expect(response.status).toBe(404);
-    expect(response.body).toEqual({ message: 'Unotherized: token is required' });
+    expect(response.body).toEqual({ message: 'Unotherized!' });
   });
 
   test('rejects a duplicate URL for the same user', async () => {
@@ -137,7 +137,7 @@ describe('URL API', () => {
     }, cookie);
 
     expect(response.status).toBe(409);
-    expect(response.body).toEqual({ message: 'URL alredy exists' });
+    expect(response.body).toEqual({ message: 'URL already exists!' });
   });
 
   test('redirects to a stored URL and increments clicks', async () => {
@@ -155,7 +155,7 @@ describe('URL API', () => {
     const response = await api('GET', '/api/url/missing-code', undefined, undefined, 'manual');
 
     expect(response.status).toBe(404);
-    expect(response.body).toEqual({ message: 'URL not found' });
+    expect(response.body).toEqual({ message: 'URL not found!' });
   });
 
   test('deletes a URL owned by the authenticated user', async () => {
@@ -165,8 +165,19 @@ describe('URL API', () => {
     const response = await api('DELETE', `/api/url/${url._id}`, undefined, cookie);
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ messsage: 'Url deleted successfully' });
+    expect(response.body).toEqual({ messsage: 'Url deleted successfully!' });
     await expect(urlModel.findById(url._id)).resolves.toBeNull();
+  });
+
+  test('rejects deleting a URL without authentication', async () => {
+    const { user } = await createUser();
+    const url = await createUrl(user);
+
+    const response = await api('DELETE', `/api/url/${url._id}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({ message: 'Unotherized!' });
+    await expect(urlModel.findById(url._id)).resolves.not.toBeNull();
   });
 
   test('does not delete a URL owned by another user', async () => {
@@ -176,8 +187,8 @@ describe('URL API', () => {
 
     const response = await api('DELETE', `/api/url/${url._id}`, undefined, otherUser.cookie);
 
-    expect(response.status).toBe(404);
-    expect(response.body).toEqual({ message: 'Url not found & you are not authorized to delete it' });
+    expect(response.status).toBe(403);
+    expect(response.body).toEqual({ message: 'Access denied!' });
     await expect(urlModel.findById(url._id)).resolves.not.toBeNull();
   });
 
@@ -190,7 +201,7 @@ describe('URL API', () => {
     const response = await api('GET', '/api/url/', undefined, currentUser.cookie);
 
     expect(response.status).toBe(200);
-    expect(response.body.message).toBe('URLs fetched successfully');
+    expect(response.body.message).toBe('URLs fetched successfully!');
     expect(response.body.count).toBe(1);
     expect(response.body.urls).toHaveLength(1);
     expect(response.body.urls[0]).toMatchObject({ shortCode: 'mine' });
@@ -200,6 +211,6 @@ describe('URL API', () => {
     const response = await api('GET', '/api/url/');
 
     expect(response.status).toBe(404);
-    expect(response.body).toEqual({ message: 'Unotherized: token is required' });
+    expect(response.body).toEqual({ message: 'Unotherized!' });
   });
 });
