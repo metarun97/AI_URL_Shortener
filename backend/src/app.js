@@ -10,6 +10,13 @@ import cors from "cors";
 /* Server created */
 const app = express({});
 
+/* Server start response */
+app.get("/", (_, res) => {
+  res.status(200).json({
+    message: "Hello from AI_URL-Shortner Server!",
+  });
+});
+
 /* Track activities of the server */
 app.use(morgan("dev"));
 

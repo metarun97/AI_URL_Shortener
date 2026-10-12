@@ -17,13 +17,6 @@ const PORT = process.env.PORT || 3000;
 /* Connect to redis database */
 await redis.connectRedis();
 
-/* Server started */
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Server is healthy",
-  });
-});
 
 /* Server started */
 app.listen(PORT, () => {
