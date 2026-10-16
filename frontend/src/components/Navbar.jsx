@@ -5,14 +5,11 @@ import { toast } from 'react-toastify';
 import { signOutThunk } from './../features/Auth/authThunk';
 
 const Navbar = () => {
-
   const [open, setOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  console.log(user);
 
-
-/* SignOut Handler */
+  /* SignOut Handler */
   const signOutHandler = async () => {
     await dispatch(signOutThunk()).unwrap();
     toast.success('Logged Out!');
@@ -169,13 +166,15 @@ const Navbar = () => {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={signOutHandler}
-            className="mt-3 w-full rounded-lg bg-teal-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-800 dark:bg-teal-300 dark:text-teal-950 dark:hover:bg-teal-200 dark:focus-visible:outline-teal-300 cursor-pointer"
-          >
-            Log out
-          </button>
+          {user && (
+            <button
+              type="button"
+              onClick={signOutHandler}
+              className="mt-3 w-full rounded-lg bg-teal-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-800 dark:bg-teal-300 dark:text-teal-950 dark:hover:bg-teal-200 dark:focus-visible:outline-teal-300 cursor-pointer"
+            >
+              Log out
+            </button>
+          )}
         </div>
       )}
     </header>

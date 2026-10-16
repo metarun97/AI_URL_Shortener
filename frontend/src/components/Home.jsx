@@ -123,7 +123,7 @@ const Home = () => {
             </div>
 
             <p className="relative mt-5 text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 sm:text-4xl">
-              {stats.totalUsers}
+              {stats?.totalUsers}
             </p>
             <p className="relative mt-1.5 text-sm text-slate-500 dark:text-slate-400">
               Total Users

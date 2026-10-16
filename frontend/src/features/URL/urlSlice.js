@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createUrlThunk, deleteUrlThunk, getAllUrlsThunk } from './urlThunk';
+import { createUrlThunk, deleteUrlThunk, getAllUrlsThunk, redirectUrlThunk } from './urlThunk';
 
 const initialState = {
   urls: [],
@@ -27,14 +27,12 @@ const urlSlice = createSlice({
         state.error = null;
       })
       .addCase(createUrlThunk.fulfilled, (state, action) => {
-        console.log(action.payload)
-        state.urls.unshift(action.payload?.url);
+        state.urls.unshift(action?.payload);
         state.isLoading = false;
         state.error = null;
       })
       .addCase(createUrlThunk.rejected, (state, action) => {
-        console.log(action.payload)
-        // state.isLoading = false;
+        state.isLoading = false;
         state.error = action.payload;
       })
 
@@ -49,6 +47,21 @@ const urlSlice = createSlice({
         state.error = null;
       })
       .addCase(getAllUrlsThunk.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+
+      /* REDIRECT A URL */
+      .addCase(redirectUrlThunk.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(redirectUrlThunk.fulfilled, (state, action) => {
+        console.log(action.payload)
+        // const deleteId = action.meta.arg;
+        state.isLoading = false;
+      })
+      .addCase(redirectUrlThunk.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       })

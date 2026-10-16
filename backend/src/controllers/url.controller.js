@@ -58,11 +58,9 @@ export const createShortUrl = async (req, res) => {
       originalUrl: newUrl.originalUrl,
       user: userId.toString(),
       shortCode: newUrl.shortCode,
-      newUrl: {
-        isUrlSafe: newUrl.isUrlSafe,
-        risk: newUrl.risk,
-        aiReason: newUrl.aiReason,
-      }
+      isUrlSafe: newUrl.isUrlSafe,
+      risk: newUrl.risk,
+      aiReason: newUrl.aiReason,
     });
 
   } catch (error) {
@@ -82,26 +80,22 @@ export const createShortUrl = async (req, res) => {
  */
 export const redirectShortUrl = async (req, res) => {
   try {
+
     const { shortCode } = req.params;
 
-    /* Url check for availablity */
     const url = await urlModel.findOne({ shortCode });
-
 
     if (!url) {
       return res.status(404).json({
         message: "URL not found!",
-      })
+      });
     }
 
-    /* If url found redirect and inc clicks */
-    await urlModel.updateOne(
-      { _id: url._id },
-      { $inc: { clicks: 1 } }
-    );
+    url.clicks += 1;
+
+    await url.save();
 
     return res.redirect(url.originalUrl);
-
 
   } catch (error) {
     console.error(error);

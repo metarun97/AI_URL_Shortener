@@ -10,7 +10,21 @@ export const createUrl = async (data) => {
 
   } catch (error) {
 
-    console.log("URL creation Error:", error);
+    throw error;
+
+  }
+}
+
+
+/* Redirect Url API */
+export const redirectUrl = async (shortCode) => {
+  try {
+    const response = await api.get(`/api/url/${shortCode}`);
+
+    console.log(response);
+    // return response;
+
+  } catch (error) {
 
     throw error;
 
@@ -27,8 +41,6 @@ export const getAllUrls = async () => {
 
   } catch (error) {
 
-    console.log("Get all URLs Error:", error);
-
     throw error;
 
   }
@@ -43,8 +55,6 @@ export const deleteUrl = async (id) => {
     return response.data;
 
   } catch (error) {
-
-    console.log("URL deletion Error:", error);
 
     throw error;
 

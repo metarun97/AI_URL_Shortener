@@ -15,7 +15,7 @@ const App = () => {
       await dispatch(getMeThunk()).unwrap();
     };
     setCurrentUser();
-  }, []);
+  }, [dispatch]);
 
   return (
     <>

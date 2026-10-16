@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { signUpThunk } from '../authThunk';
+import { useEffect } from 'react';
 
 const SignUp = () => {
-
   const { register, handleSubmit, reset } = useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -21,10 +21,13 @@ const SignUp = () => {
       reset();
       navigate('/signin');
     } catch (error) {
-      // console.log(error);
       console.error(error);
     }
   };
+
+  // useEffect(() => {
+  //   signUpHandler();
+  // }, [dispatch]);
 
   const inputClass =
     'w-full border-0 border-b border-slate-300 bg-transparent py-2 text-[0.95rem] ' +

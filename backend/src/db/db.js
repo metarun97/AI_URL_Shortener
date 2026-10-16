@@ -1,15 +1,17 @@
-/* Imported elements */
 import mongoose from "mongoose";
 
 
 /* ConnectDb function */
 const connectToDb = async () => {
   try {
+
     await mongoose.connect(process.env.MONGO_URI);
-    console.log("MongoDb database connected Successfully");
+    console.log("Connected to MongoDB!");
 
   } catch (error) {
-    console.error("Error connecting to MongoDb Database", error);
+
+    console.error("Error to connect MongoDb:", error);
+
   }
 }
 

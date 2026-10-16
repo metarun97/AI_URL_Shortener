@@ -19,7 +19,7 @@ redisClient.on("reconnecting", () => {
 
 /* Redis client connect successfully code */
 redisClient.on("ready", () => {
-  console.log("Redis connected successfully!");
+  console.log("Connected to Redis!");
 });
 
 /* Redis client connection ending */
@@ -35,7 +35,7 @@ export const connectRedis = async () => {
       await redisClient.connect();
     }
   } catch (error) {
-    console.error("Redis connection failed:", error);
+    console.error("Redis connection error:", error);
   }
 };
 

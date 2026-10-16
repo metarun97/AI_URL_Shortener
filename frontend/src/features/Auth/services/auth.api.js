@@ -10,8 +10,6 @@ export const signUp = async (data) => {
 
   } catch (error) {
 
-    console.log("SignUp Error:", error?.response?.data?.message);
-
     throw error;
   }
 }
@@ -25,7 +23,6 @@ export const signIn = async (data) => {
     return response.data;
 
   } catch (error) {
-    console.log("LOGIN API ERROR:", error.response?.data);
 
     throw error;
   }
@@ -41,8 +38,6 @@ export const signOut = async () => {
 
   } catch (error) {
 
-    console.log("Logout Error:", error?.response?.data?.message);
-
     throw error;
   }
 }
@@ -56,8 +51,6 @@ export const getMe = async () => {
     return response.data;
 
   } catch (error) {
-
-    console.log("GetMe Error:", error?.response?.data?.message);
 
     throw error;
   }

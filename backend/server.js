@@ -20,5 +20,5 @@ await redis.connectRedis();
 
 /* Server started */
 app.listen(PORT, () => {
-  console.log(`Server Running on PORT: ${PORT}`);
+  console.log(`Server Running on PORT:${PORT}`);
 })

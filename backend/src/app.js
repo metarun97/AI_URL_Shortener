@@ -10,7 +10,7 @@ import cors from "cors";
 /* Server created */
 const app = express({});
 
-/* Server start response */
+/* Server start response message */
 app.get("/", (_, res) => {
   res.status(200).json({
     message: "Hello from AI_URL-Shortner Server!",

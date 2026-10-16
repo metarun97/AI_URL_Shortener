@@ -113,7 +113,9 @@ describe('URL API', () => {
       originalUrl: 'https://example.com/docs',
       user: user._id.toString(),
       shortCode: expect.any(String),
-      newUrl: { isUrlSafe: true, risk: 'low', aiReason: 'Test URL is safe' },
+      isUrlSafe: true,
+      risk: 'low',
+      aiReason: 'Test URL is safe',
     });
     await expect(urlModel.findOne({ originalUrl: 'https://example.com/docs' }))
       .resolves.toMatchObject({ user: user._id });

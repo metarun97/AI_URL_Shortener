@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { createUrl, deleteUrl, getAllUrls } from "./services/url.api";
+import { createUrl, deleteUrl, getAllUrls, redirectUrl } from "./services/url.api";
 
 
 /* Create URL Thunk */
@@ -16,6 +16,25 @@ export const createUrlThunk = createAsyncThunk("url/createUrl", async (data, { r
   }
 })
 
+
+/* Fetch all URLs Thunk */
+export const redirectUrlThunk = createAsyncThunk("url/redirectUrl", async (data, { rejectWithValue }) => {
+
+  try {
+    const response = await redirectUrl();
+
+    console.log("Res data =>", response);
+
+    // return resonse.url;
+
+
+
+  } catch (error) {
+
+    return rejectWithValue(error?.resonse?.data?.message || "Fail to redirect to URL")
+
+  }
+})
 
 /* Fetch all URLs Thunk */
 export const getAllUrlsThunk = createAsyncThunk("url/getAllUrls", async (_, { rejectWithValue }) => {

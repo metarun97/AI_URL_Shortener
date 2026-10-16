@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteUrlThunk } from '../urlThunk';
-import { Link } from 'react-router';
 import { toast } from 'react-toastify';
 
 const riskStyles = {
@@ -16,6 +15,8 @@ const UrlList = () => {
   const { urls, loading } = useSelector((state) => state.urls);
   const dispatch = useDispatch();
 
+  console.log(urls);
+
   /* Handle copy function */
   const copyHandler = async (url) => {
     try {
@@ -27,14 +28,18 @@ const UrlList = () => {
       toast.success('Copied to clipboard!');
       setTimeout(() => setCopiedId(null), 2000);
     } catch (error) {
-      console.log('Could not copy to clipboard.', error);
+      toast.error(error);
     }
   };
 
   /* Handle delete function */
   const deleteHandler = async (id) => {
-    await dispatch(deleteUrlThunk(id)).unwrap();
-    toast.success('URL deleted!');
+    try {
+      await dispatch(deleteUrlThunk(id)).unwrap();
+      toast.success('URL deleted!');
+    } catch (error) {
+      toast.error(error);
+    }
   };
 
   return (
@@ -53,22 +58,25 @@ const UrlList = () => {
           </p>
         ) : (
           <ul className="divide-y divide-slate-200 dark:divide-slate-800">
-            {urls.map((url) => (
-              <li key={url?.shortCode} className="px-6 py-5">
+            {urls.map((url, index) => (
+              <li
+                key={url?._id ?? url?.shortCode ?? index}
+                className="px-6 py-5"
+              >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   {/* Left: URL details */}
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm text-slate-500 dark:text-slate-400">
                       {url?.originalUrl}
                     </p>
-                    <Link
-                      to={`http://localhost:3000/api/url/${url?.shortCode}`}
+                    <a
+                      href={`${import.meta.env.VITE_API_URL}/api/url/${url?.shortCode}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="mt-0.5 inline-block truncate text-sm font-medium text-teal-800 hover:underline dark:text-teal-300"
+                      className="mt-0.5 inline-block truncate text-sm font-medium text-teal-800 hover:underline dark:text-teal-300 cursor-pointer"
                     >
-                      {`http://localhost:3000/api/url/${url?.shortCode}`}
-                    </Link>
+                      {`${import.meta.env.VITE_API_URL}/api/url/${url?.shortCode}`}
+                    </a>
 
                     <div className="mt-2 flex flex-wrap items-center gap-2">
                       <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
@@ -78,7 +86,8 @@ const UrlList = () => {
                       <span
                         className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${riskStyles[url?.risk] || riskStyles?.low}`}
                       >
-                        {url.isUrlSafe ? 'Safe' : 'Unsafe'} · {url.risk} risk
+                        {url?.risk ? 'Safe' : 'Unsafe'} · {url?.newUrl?.risk}{' '}
+                        risk
                       </span>
                     </div>
 
