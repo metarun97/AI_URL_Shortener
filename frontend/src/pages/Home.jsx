@@ -1,30 +1,9 @@
-import { useDebugValue, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getStats } from '../apis/stats.api';
 
-// const STATS = [
-//   {
-//     label: 'Total Users',
-//     value: '12,480',
-//     icon: (
-//       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-//     ),
-//   },
-//   {
-//     label: 'URLs Created',
-//     value: '58,932',
-//     icon: (
-//       <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-//     ),
-//   },
-//   {
-//     label: 'Links Clicked',
-//     value: '3.2M',
-//     icon: <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" strokeLinejoin="round" />,
-//   },
-// ];
 
 const Home = () => {
-  // const { urls } = useSelector((state) => state.urls);
+
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalUrls: 0,

@@ -17,21 +17,20 @@ export const createUrlThunk = createAsyncThunk("url/createUrl", async (data, { r
 })
 
 
-/* Fetch all URLs Thunk */
-export const redirectUrlThunk = createAsyncThunk("url/redirectUrl", async (data, { rejectWithValue }) => {
+/* Redirect URL Thunk */
+export const redirectUrlThunk = createAsyncThunk("url/redirectUrl", async (shortCode, { rejectWithValue }) => {
 
   try {
-    const response = await redirectUrl();
+    const response = await redirectUrl(shortCode);
 
     console.log("Res data =>", response);
 
-    // return resonse.url;
-
+    return response;
 
 
   } catch (error) {
 
-    return rejectWithValue(error?.resonse?.data?.message || "Fail to redirect to URL")
+    return rejectWithValue(error?.response?.data?.message || "Fail to redirect to URL")
 
   }
 })
@@ -39,13 +38,13 @@ export const redirectUrlThunk = createAsyncThunk("url/redirectUrl", async (data,
 /* Fetch all URLs Thunk */
 export const getAllUrlsThunk = createAsyncThunk("url/getAllUrls", async (_, { rejectWithValue }) => {
   try {
-    const resonse = await getAllUrls();
+    const response = await getAllUrls();
 
-    return resonse.urls;
+    return response.urls;
 
   } catch (error) {
 
-    return rejectWithValue(error?.resonse?.data?.message || "Fail to fetch all URLs")
+    return rejectWithValue(error?.response?.data?.message || "Fail to fetch all URLs")
 
   }
 })
@@ -60,7 +59,7 @@ export const deleteUrlThunk = createAsyncThunk("url/deleteUrl", async (id, { rej
 
   } catch (error) {
 
-    return rejectWithValue(error?.resonse?.data?.message || "Fail to delete URL")
+    return rejectWithValue(error?.response?.data?.message || "Fail to delete URL")
 
   }
 })

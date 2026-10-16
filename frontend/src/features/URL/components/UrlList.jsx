@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteUrlThunk } from '../urlThunk';
 import { toast } from 'react-toastify';
+import ListUrlSkeleton from '../../../components/skeletons/ListUrlSkeleton';
+
 
 const riskStyles = {
   low: 'bg-emerald-50 text-emerald-700 ring-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:ring-emerald-900',
@@ -10,12 +12,14 @@ const riskStyles = {
   high: 'bg-red-50 text-red-700 ring-red-200 dark:bg-red-950 dark:text-red-300 dark:ring-red-900',
 };
 
+
 const UrlList = () => {
+
   const [copiedId, setCopiedId] = useState(null);
-  const { urls, loading } = useSelector((state) => state.urls);
+  const { urls, urlLoading } = useSelector((state) => state.urls);
   const dispatch = useDispatch();
 
-  console.log(urls);
+  // console.log(urls);
 
   /* Handle copy function */
   const copyHandler = async (url) => {
@@ -42,6 +46,16 @@ const UrlList = () => {
     }
   };
 
+  /* Handle redirect url function */
+  // const redirectHandler = async (shortCode) => {
+  //   try {
+  //     const res = await dispatch(redirectUrlThunk(shortCode)).wrap();
+  //     console.log(res);
+  //   } catch (error) {
+  //     toast.error(error);
+  //   }
+  // };
+
   return (
     <>
       {/* All URLs List */}
@@ -52,7 +66,9 @@ const UrlList = () => {
           </h2>
         </div>
 
-        {urls.length === 0 ? (
+        {urlLoading ? (
+          <ListUrlSkeleton />
+        ) : urls.length === 0 ? (
           <p className="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
             No URLs yet. Create one above to get started.
           </p>
@@ -70,12 +86,12 @@ const UrlList = () => {
                       {url?.originalUrl}
                     </p>
                     <a
-                      href={`${import.meta.env.VITE_API_URL}/api/url/${url?.shortCode}`}
+                      href={`http://localhost:3000/api/url/${url?.shortCode}`}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="mt-0.5 inline-block truncate text-sm font-medium text-teal-800 hover:underline dark:text-teal-300 cursor-pointer"
                     >
-                      {`${import.meta.env.VITE_API_URL}/api/url/${url?.shortCode}`}
+                      {url?.shortCode}
                     </a>
 
                     <div className="mt-2 flex flex-wrap items-center gap-2">

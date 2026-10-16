@@ -1,17 +1,19 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { signUpThunk } from '../authThunk';
-import { useEffect } from 'react';
+
 
 const SignUp = () => {
-  const { register, handleSubmit, reset } = useForm();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  const { user, loading, error } = useSelector((state) => state.auth);
-  // console.log(user);
+  const [showPassword, setShowPassword] = useState(false);
+  const { register, handleSubmit, reset } = useForm();
+  const { loading, error } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
 
   /* SignUp handler */
   const signUpHandler = async (data) => {
@@ -25,9 +27,6 @@ const SignUp = () => {
     }
   };
 
-  // useEffect(() => {
-  //   signUpHandler();
-  // }, [dispatch]);
 
   const inputClass =
     'w-full border-0 border-b border-slate-300 bg-transparent py-2 text-[0.95rem] ' +
@@ -102,12 +101,21 @@ const SignUp = () => {
             <input
               id="password"
               name="password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               autoComplete="off"
               placeholder="Enter password"
               className={inputClass}
               {...register('password')}
             />
+            <label className="mt-3 flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+              <input
+                type="checkbox"
+                checked={showPassword}
+                onChange={(event) => setShowPassword(event.target.checked)}
+                className="accent-teal-800 dark:accent-teal-300"
+              />
+              Show password
+            </label>
           </div>
 
           <button type="submit" disabled={loading} className={buttonClass}>

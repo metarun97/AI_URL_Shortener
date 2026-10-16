@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import { toast } from 'react-toastify';
 import { signOutThunk } from './../features/Auth/authThunk';
 
+
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
@@ -53,8 +54,8 @@ const Navbar = () => {
 
           {/* Links show according to user */}
           {user ? (
-            <Link to={'/urldashboard'} className={linkClass}>
-              UrlDashbord
+            <Link to={'/dashboard'} className={linkClass}>
+              Dashbord
             </Link>
           ) : (
             <div>

@@ -3,17 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import { signInThunk } from '../authThunk';
+import { useState } from 'react';
 
 const SignIn = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit, reset } = useForm();
-
-  // const { isLoading } = useSelector((state) => state.urls);
-  const { user, error } = useSelector((state) => state.auth);
-  // console.log('MY REDUX USER', user);
-  // console.log('MY REDUX ERROR', error);
-
+  const { loading, error } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const naviate = useNavigate();
+  const navigate = useNavigate();
 
   /* Login handler function */
   const signInHandler = async (data) => {
@@ -21,11 +18,9 @@ const SignIn = () => {
       await dispatch(signInThunk(data)).unwrap();
       toast.success('SignIn Success!');
       reset();
-      naviate("/urlDashboard")
-
+      navigate('/dashboard');
     } catch (error) {
-      // console.log('ERROR: ', error);
-      console.error(error);
+      toast.error(error);
     }
   };
 
@@ -78,22 +73,31 @@ const SignIn = () => {
             <input
               id="password"
               name="password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               autoComplete="off"
               placeholder="Enter passoword..."
               className={inputClass}
               {...register('password')}
             />
+
+            <label className="mt-3 flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+              <input
+                type="checkbox"
+                checked={showPassword}
+                onChange={(event) => setShowPassword(event.target.checked)}
+                className="accent-teal-800 dark:accent-teal-300"
+              />
+              Show password
+            </label>
           </div>
 
           {/* Login Button */}
           <button
             type="submit"
-            // disabled={isLoading}
+            disabled={loading}
             className="mt-2 w-full rounded-lg bg-teal-800 px-4 py-2.5 text-[0.95rem] font-medium text-white transition hover:bg-teal-700 [focus-visible:outline] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-teal-300 dark:text-teal-950 dark:hover:bg-teal-200 dark:focus-visible:outline-teal-300 cursor-pointer"
           >
-            {/* {isLoading ? 'Signing in…' : 'Sign in'} */}
-            SignIn
+            {loading ? 'Signing in…' : 'Sign in'}
           </button>
 
           {/* Login error field */}

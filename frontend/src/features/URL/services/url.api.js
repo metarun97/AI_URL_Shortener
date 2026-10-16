@@ -19,10 +19,9 @@ export const createUrl = async (data) => {
 /* Redirect Url API */
 export const redirectUrl = async (shortCode) => {
   try {
-    const response = await api.get(`/api/url/${shortCode}`);
+    const response = await api.get(`/api/url/${shortCode}`, { maxRedirects: 0 });
 
-    console.log(response);
-    // return response;
+    return response.data;
 
   } catch (error) {
 

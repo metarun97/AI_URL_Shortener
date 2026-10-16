@@ -1,6 +1,8 @@
 import { useSelector } from 'react-redux';
 import { Navigate, Outlet } from 'react-router';
 
+
+/* Protected Route */
 const Protected = () => {
   const { user, loading } = useSelector((state) => state.auth);
 

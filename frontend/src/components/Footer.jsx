@@ -1,15 +1,15 @@
 import { Link } from 'react-router';
 
+
 const Footer = () => {
   const year = new Date().getFullYear();
 
   const columns = [
     {
-      title: 'Product',
+      title: 'Service',
       links: [
         { label: 'Home', href: '/' },
         { label: 'Dashboard', href: '/dashboard' },
-        { label: 'Create URL', href: '/create' },
       ],
     },
     {
@@ -61,9 +61,9 @@ const Footer = () => {
               <ul className="mt-3 flex flex-col gap-2.5">
                 {col.links.map((link) => (
                   <li key={link.href}>
-                    <a href={link.href} className={linkClass}>
+                    <Link to={link.href} className={linkClass}>
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
