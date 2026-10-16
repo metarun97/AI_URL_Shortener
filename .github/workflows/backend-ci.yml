@@ -27,3 +27,7 @@ jobs:
 
       - name: Build Backend Docker Image
         run: docker build -t ai-url-shortener-backend:latest ./backend
+
+      - name: Trigger Render Deployment
+        if: success() && github.event_name == 'push'
+        run: curl --fail --silent --show-error "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
