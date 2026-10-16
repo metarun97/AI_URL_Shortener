@@ -8,7 +8,7 @@ import redisClient from '../db/redis.js';
 
 /**
  * @name register
- * @description register a new user expects username, email and password in req.body
+ * @description register a new user expect username, email and password in req.body
  * @access public
  */
 export const register = async (req, res) => {
@@ -77,7 +77,7 @@ export const register = async (req, res) => {
 
 /**
  * @name login
- * @description login a user expects email and password in req.body
+ * @description login a user expect email and password in req.body
  * @access public
  */
 export const login = async (req, res) => {
