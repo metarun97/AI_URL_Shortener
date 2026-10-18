@@ -89,7 +89,7 @@ Add the registration, login, logout, and current-user endpoints from the actual 
 
 Send the request to:
 
-`https://ai-url-shortener-i219.onrender.com/url/create`
+`https://ai-url-shortener-i219.onrender.com/api/url/create`
 
 Provide the authentication cookie if the endpoint requires an authenticated user.
 
