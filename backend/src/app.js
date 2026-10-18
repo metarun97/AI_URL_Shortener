@@ -10,10 +10,12 @@ import cors from "cors";
 /* Server created */
 const app = express({});
 
-/* Server start response message */
-app.get("/", (_, res) => {
+/* Server health response message */
+app.get("/health", (req, res) => {
   res.status(200).json({
-    message: "Hello from AI_URL-Shortner Server!",
+    success: true,
+    message: "AI URL Shortener API is healthy",
+    timestamp: new Date().toISOString(),
   });
 });
 
