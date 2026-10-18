@@ -17,9 +17,9 @@ The AI URL Shortener backend provides REST APIs for URL shortening, AI-powered U
 
 ## Base URL
 
-**Production API:** `https://YOUR-BACKEND-DOMAIN`
+**Production API:** `https://ai-url-shortener-i219.onrender.com/`
 
-**Health Check:** `https://YOUR-BACKEND-DOMAIN/health`
+**Health Check:** `https://ai-url-shortener-i219.onrender.com/health`
 
 Replace the placeholder with your deployed backend URL.
 
@@ -44,12 +44,21 @@ All endpoints below are relative to the production base URL.
 |---|---|---|
 | GET | `/health` | Check backend availability |
 
+### AUTH Management
+
+| Method | Endpoint | Description | Authentication |
+|---|---|---|---|
+| POST | `/api/auth/register` | Register a user | Required |
+| POST | `/api/auth/login` | Login a user | Required |
+| POST | `/api/auth/get-me` | Get Current user | Required |
+| POST | `/api/auth/logout` | Logout a user | Required |
+
 ### URL Management
 
 | Method | Endpoint | Description | Authentication |
 |---|---|---|---|
 | POST | `/api/url/create` | Create a short URL | Required |
-| GET | `/api/url` | Retrieve the user's URLs | Required |
+| GET | `/api/url/` | Retrieve the user's URLs | Required |
 | DELETE | `/api/url/:id` | Delete a URL by its database ID | Required |
 
 ### URL Redirection
@@ -74,13 +83,13 @@ Add the registration, login, logout, and current-user endpoints from the actual 
 
 ```json
 {
-  "originalUrl": "https://example.com"
+  "originalUrl": "https://ai-url-shortener-i219.onrender.com/"
 }
 ```
 
 Send the request to:
 
-`https://YOUR-BACKEND-DOMAIN/api/url/create`
+`https://ai-url-shortener-i219.onrender.com/url/create`
 
 Provide the authentication cookie if the endpoint requires an authenticated user.
 
